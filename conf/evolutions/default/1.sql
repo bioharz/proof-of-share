@@ -14,7 +14,7 @@ create table note (
   title                         varchar(255),
   description                   varchar(255),
   last_edited                   integer not null,
-  category_id                   integer,
+  category_id                   integer not null,
   constraint pk_note primary key (id)
 );
 

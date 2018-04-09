@@ -5,6 +5,7 @@ import play.data.validation.Constraints;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -23,6 +24,7 @@ public class Note {
     protected String description = "";
     protected int lastEdited;
 
+    @NotNull
     @ManyToOne
     protected Category category;
 
