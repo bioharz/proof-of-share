@@ -9,14 +9,29 @@ import play.mvc.Result;
 import services.EbeanCategoryRepository;
 
 import javax.inject.Inject;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CategoryController extends Controller {
 
     @Inject
     protected EbeanCategoryRepository categoryRepository;
 
-    public Result list() {
-        return ok(Json.toJson(categoryRepository.getCategories()));
+    public Result list(String sort, String query) {
+        Stream<Category> categories = categoryRepository.getCategories().stream();
+        if (sort != null && !sort.isEmpty()) {
+            if (sort.equals("asc")) {
+                categories = categories.sorted(Comparator.comparing(Category::getTitle));
+            } else if (sort.equals("desc")) {
+                categories = categories.sorted(Comparator.comparing(Category::getTitle).reversed());
+            }
+        }
+        if (query != null && !query.isEmpty()) {
+            categories = categories.filter(c -> c.getTitle().toLowerCase().matches("(?i)" + query + ".*"));
+        }
+        return ok(Json.toJson(categories));
     }
 
     public Result get(int id) {
@@ -39,7 +54,7 @@ public class CategoryController extends Controller {
         JsonNode json = request().body().asJson();
 
         if (json.findPath("title").textValue() == null ||
-            json.findPath("title").textValue().isEmpty()) {
+                json.findPath("title").textValue().isEmpty()) {
             return badRequest("a title is required for categories");
         }
 

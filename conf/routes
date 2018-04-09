@@ -12,7 +12,7 @@ POST    /notes                      controllers.HomeController.save
 DELETE  /notes/:id                  controllers.HomeController.delete(id:Integer)
 
 # API v1
-GET     /api/v1/categories          controllers.CategoryController.list()
+GET     /api/v1/categories          controllers.CategoryController.list(sort: String ?=null, query: String ?=null)
 
 GET     /api/v1/categories/:id      controllers.CategoryController.get(id:Integer)
 
