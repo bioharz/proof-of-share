@@ -1,15 +1,19 @@
 package controllers;
 
+import middlewares.BasicAuthenticationMiddleware;
 import models.Note;
 import play.data.Form;
 import play.data.FormFactory;
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.Result;
+import play.mvc.With;
 import services.EbeanCategoryRepository;
 import services.EbeanNoteRepository;
 
 import javax.inject.Inject;
 import java.util.List;
 
+@With(BasicAuthenticationMiddleware.class)
 public class HomeController extends Controller {
 
     protected EbeanNoteRepository noteRepository;
