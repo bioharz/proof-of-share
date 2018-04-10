@@ -29,6 +29,7 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 POST        /api/v1/notes           controllers.NoteController.save()
 
 ##PUT     /api/v1/notes:id:         nocsrf on PUT is broken. Please use POST with json id. thx
+##try... notes/:id: for fix
 
 GET        /api/v1/notes            controllers.NoteController.list(sort: String ?=null, query: String ?=null)
 
