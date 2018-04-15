@@ -14,8 +14,8 @@ public class EbeanUserRepository {
             Ebean.save(user1);
 
             User user2 = new User();
-            user1.setUsername("user2");
-            user1.setPasswordInClear("password2");
+            user2.setUsername("user2");
+            user2.setPasswordInClear("password2");
             Ebean.save(user2);
         }
     }

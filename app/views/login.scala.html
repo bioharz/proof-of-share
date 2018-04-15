@@ -1,0 +1,21 @@
+@main("Login") {
+
+    <form method="post" action="/login">
+
+        <div class="form-group">
+            <label for="form-username">Username</label>
+            <input name="username" type="text" class="form-control" id="form-username">
+        </div>
+
+        <div class="form-group">
+            <label for="form-password">password</label>
+            <textarea name="password" type="password" class="form-control" id="form-password"></textarea>
+        </div>
+
+        @helper.CSRF.formField
+
+        <button type="submit" class="btn btn-primary">Save</button>
+
+    </form>
+
+}
