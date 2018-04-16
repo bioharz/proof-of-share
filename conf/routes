@@ -41,3 +41,9 @@ GET           /login                        controllers.HomeController.login()
 POST          /authenticate                 controllers.HomeController.authenticate()
 
 GET           /logout                       controllers.HomeController.logout()
+
+GET           /changepw                     controllers.HomeController.changePwPage()
+
++nocsrf
+POST          /changepw                     controllers.HomeController.changePw()
+

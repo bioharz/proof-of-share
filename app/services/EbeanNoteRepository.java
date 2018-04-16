@@ -16,10 +16,16 @@ public class EbeanNoteRepository {
 
 
     public List<Note> getNotes(User user) {
-        return Ebean.find(Note.class)
-                .where()
-                .eq("user", user)
-                .findList();
+        if (user.getAdmin()) {
+            return Ebean.find(Note.class)
+                    .where()
+                    .findList();
+        } else {
+            return Ebean.find(Note.class)
+                    .where()
+                    .eq("user", user)
+                    .findList();
+        }
     }
 
     @Deprecated
@@ -31,16 +37,23 @@ public class EbeanNoteRepository {
     }
 
     public Note getNote(int id, User user) {
-        return Ebean.find(Note.class)
-                .where()
-                .eq("id", id)
-                .eq("user", user)
-                .findOne();
+        if (user.getAdmin()) {
+            return Ebean.find(Note.class)
+                    .where()
+                    .eq("id", id)
+                    .findOne();
+        } else {
+            return Ebean.find(Note.class)
+                    .where()
+                    .eq("id", id)
+                    .eq("user", user)
+                    .findOne();
+        }
     }
 
     @Deprecated
     public void saveNote(Note note) {
-        note.setLastEdited( (int) (System.currentTimeMillis() / 1000L));
+        note.setLastEdited((int) (System.currentTimeMillis() / 1000L));
 
         if (note.getId() > 0) {
             Ebean.update(note);
@@ -50,13 +63,26 @@ public class EbeanNoteRepository {
     }
 
     public void saveNote(Note note, User user) {
-        note.setLastEdited((int) (System.currentTimeMillis() / 1000L));
 
-        if (note.getId() > 0) {
-            Ebean.update(note);
+        note.setLastEdited((int) (System.currentTimeMillis() / 1000L));
+        if (user.getAdmin()) {
+            if (note.getId() > 0) {
+                Ebean.update(note);
+            } else {
+                Ebean.save(note);
+            }
         } else {
-            note.setUser(user);
-            Ebean.save(note);
+            if (note.getId() > 0) {
+                Note noteOld = getNote(note.getId());
+                if (noteOld.getUser().equals(user)) { //TODO: I have no clue if this will work
+                    Ebean.update(note);
+                } else {
+                    Logger.error("Don't get me wrong, but i think your code is broken. See EbeanNoteRepo, saveNote(id, user)");
+                }
+            } else {
+                note.setUser(user);
+                Ebean.save(note);
+            }
         }
     }
 

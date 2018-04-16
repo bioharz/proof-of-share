@@ -1,6 +1,7 @@
 package controllers;
 
 import middlewares.SessionAuthenticationMiddleware;
+import models.ChangePw;
 import models.Login;
 import models.Note;
 import models.User;
@@ -24,6 +25,8 @@ public class HomeController extends Controller {
     protected EbeanUserRepository userRepository;
     protected Form<Note> noteForm;
     protected Form<Login> loginForm;
+    protected Form<ChangePw> changePwForm;
+
 
     @Inject
     public HomeController(
@@ -36,6 +39,7 @@ public class HomeController extends Controller {
         this.userRepository = userRepository;
         this.noteForm = formFactory.form(Note.class);
         this.loginForm = formFactory.form(Login.class);
+        this.changePwForm = formFactory.form(ChangePw.class);
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
@@ -104,6 +108,7 @@ public class HomeController extends Controller {
                 if (user.comparePasswords(login.password)) {
                     session().clear();
                     session("username", user.getUsername());
+                    session("isAdmin", user.getAdmin().toString());
                     return redirect(
                             routes.HomeController.index()
                     );
@@ -132,4 +137,47 @@ public class HomeController extends Controller {
         flash("error", "User not found.");
         return null;
     }
+
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+    public Result changePwPage() {
+
+        User user = getSessionUser();
+        if (user != null) {
+            return ok(views.html.changePassword.render(changePwForm.fill(new ChangePw())));
+        }
+        return badRequest(views.html.index.render(null));
+    }
+
+    public Result changePw() {
+
+        Form<ChangePw> form = changePwForm.bindFromRequest();
+        if (!form.hasErrors()) {
+            ChangePw changePw = form.get();
+            User user = getSessionUser();
+            if (user != null) {
+                if (user.comparePasswords(changePw.getPasswordOld())) {
+
+                    if (!changePw.getPasswordNew().equals("") && changePw.getPasswordNew().equals(changePw.getPasswordNewCheck())) {
+                        user.setPasswordInClear(changePw.getPasswordNew());
+                        userRepository.updateUser(user);
+                        flash("success", "Password successfully changed.");
+                        return redirect(routes.HomeController.index());
+                    } else {
+                        flash("error", "New password doesn't match...");
+                        return redirect(routes.HomeController.changePwPage());
+                    }
+                } else {
+                    flash("error", "Old password doesn't match...");
+                    return redirect(routes.HomeController.changePwPage());
+                }
+            }
+
+        } else {
+            flash("error", "Password Change Error.");
+            return redirect(routes.HomeController.changePwPage());
+        }
+        flash("error", "Password Change Error...");
+        return redirect(routes.HomeController.changePwPage());
+    }
+
 }

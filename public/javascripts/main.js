@@ -7,7 +7,8 @@ if (tbody) {
 
             if (confirmDelete) {
                 fetch('/notes/' + e.target.dataset.id, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    credentials: 'include'
                 }).then(function() {
                     location.reload();
                 });

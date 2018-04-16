@@ -17,6 +17,12 @@ public class EbeanUserRepository {
             user2.setUsername("user2");
             user2.setPasswordInClear("password2");
             Ebean.save(user2);
+
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setPasswordInClear("toor");
+            admin.setAdmin(true);
+            Ebean.save(admin);
         }
     }
 
@@ -26,4 +32,8 @@ public class EbeanUserRepository {
                 .findOne();
     }
 
+
+    public void updateUser(User user) {
+        Ebean.save(user);
+    }
 }

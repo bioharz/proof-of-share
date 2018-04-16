@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import java.security.MessageDigest;
 import java.util.List;
 
@@ -21,6 +22,9 @@ public class User {
 
     @OneToMany
     protected List<Note> notes;
+
+    @NotNull
+    protected Boolean isAdmin = false;
 
     public void setPasswordInClear(String password) {
         setPassword(getHash(password));
@@ -64,7 +68,22 @@ public class User {
     }
 
     public void setPassword(String password) {
-
         this.password = password;
+    }
+
+    public List<Note> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<Note> notes) {
+        this.notes = notes;
+    }
+
+    public Boolean getAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
     }
 }
