@@ -43,7 +43,7 @@ public class HomeController extends Controller {
 
         User user = getSessionUser();
         if (user != null) {
-            List<Note> notes = noteRepository.getNotes();
+            List<Note> notes = noteRepository.getNotes(user);
             return ok(views.html.index.render(notes));
         }
         return badRequest(views.html.index.render(null));
@@ -54,7 +54,7 @@ public class HomeController extends Controller {
 
         User user = getSessionUser();
         if (user != null) {
-            Note note = noteRepository.getNote(id);
+            Note note = noteRepository.getNote(id, user);
             if (note == null) {
                 note = new Note();
             }
@@ -72,7 +72,7 @@ public class HomeController extends Controller {
             if (form.hasErrors()) {
                 return badRequest(views.html.form.render(form, categoryRepository.getCategories()));
             } else {
-                noteRepository.saveNote(form.get());
+                noteRepository.saveNote(form.get(), user);
                 flash("success", "The note was successfully saved.");
                 return redirect("/");
             }
@@ -85,7 +85,7 @@ public class HomeController extends Controller {
     public Result delete(int id) {
         User user = getSessionUser();
         if (user != null) {
-            noteRepository.deleteNote(id);
+            noteRepository.deleteNote(id, user);
             return ok();
         }
         return badRequest(views.html.index.render(null));
