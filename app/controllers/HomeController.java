@@ -40,38 +40,55 @@ public class HomeController extends Controller {
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
     public Result index() {
-        List<Note> notes = noteRepository.getNotes();
-        return ok(views.html.index.render(notes));
+
+        User user = getSessionUser();
+        if (user != null) {
+            List<Note> notes = noteRepository.getNotes();
+            return ok(views.html.index.render(notes));
+        }
+        return badRequest(views.html.index.render(null));
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
     public Result form(int id) {
-        Note note = noteRepository.getNote(id);
 
-        if (note == null) {
-            note = new Note();
+        User user = getSessionUser();
+        if (user != null) {
+            Note note = noteRepository.getNote(id);
+            if (note == null) {
+                note = new Note();
+            }
+            return ok(views.html.form.render(noteForm.fill(note), categoryRepository.getCategories()));
         }
-
-        return ok(views.html.form.render(noteForm.fill(note), categoryRepository.getCategories()));
+        return badRequest(views.html.index.render(null));
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
     public Result save() {
-        Form<Note> form = noteForm.bindFromRequest();
 
-        if (form.hasErrors()) {
-            return badRequest(views.html.form.render(form, categoryRepository.getCategories()));
-        } else {
-            noteRepository.saveNote(form.get());
-            flash("success", "The note was successfully saved.");
-            return redirect("/");
+        User user = getSessionUser();
+        if (user != null) {
+            Form<Note> form = noteForm.bindFromRequest();
+            if (form.hasErrors()) {
+                return badRequest(views.html.form.render(form, categoryRepository.getCategories()));
+            } else {
+                noteRepository.saveNote(form.get());
+                flash("success", "The note was successfully saved.");
+                return redirect("/");
+            }
         }
+        return badRequest(views.html.form.render(null, null));
+
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
     public Result delete(int id) {
-        noteRepository.deleteNote(id);
-        return ok();
+        User user = getSessionUser();
+        if (user != null) {
+            noteRepository.deleteNote(id);
+            return ok();
+        }
+        return badRequest(views.html.index.render(null));
     }
 
     public Result login() {
@@ -103,5 +120,16 @@ public class HomeController extends Controller {
         return redirect(
                 routes.HomeController.login()
         );
+    }
+
+
+    public User getSessionUser() {
+        String username = session().get("username");
+        User user = userRepository.getUserByUsername(username);
+        if (user != null) {
+            return user;
+        }
+        flash("error", "User not found.");
+        return null;
     }
 }

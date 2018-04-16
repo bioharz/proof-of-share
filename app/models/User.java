@@ -5,7 +5,9 @@ import play.Logger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.security.MessageDigest;
+import java.util.List;
 
 @Entity
 public class User {
@@ -16,6 +18,9 @@ public class User {
     @Column(unique = true)
     protected String username;
     protected String password;
+
+    @OneToMany
+    protected List<Note> notes;
 
     public void setPasswordInClear(String password) {
         setPassword(getHash(password));

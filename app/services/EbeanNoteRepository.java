@@ -2,13 +2,23 @@ package services;
 
 import io.ebean.Ebean;
 import models.Note;
+import models.User;
 
 import java.util.List;
 
 public class EbeanNoteRepository {
 
+
     public List<Note> getNotes() {
         return Ebean.find(Note.class).findList();
+    }
+
+
+    public List<Note> getNotes(User user) {
+        return Ebean.find(Note.class)
+                .where()
+                .eq("user", user)
+                .findList();
     }
 
     public Note getNote(int id) {
@@ -16,6 +26,14 @@ public class EbeanNoteRepository {
                     .where()
                     .eq("id", id)
                     .findOne();
+    }
+
+    public Note getNote(int id, User user) {
+        return Ebean.find(Note.class)
+                .where()
+                .eq("id", id)
+                .eq("user", user)
+                .findOne();
     }
 
     public void saveNote(Note note) {
