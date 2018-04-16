@@ -1,6 +1,13 @@
+@(form: Form[Login])
 @main("Login") {
 
-    <form method="post" action="/login">
+    @if(flash.containsKey("error")) {
+        <div class="alert alert-danger" role="alert">
+        @flash.get("error")
+        </div>
+    }
+
+    <form method="post" action="/authenticate">
 
         <div class="form-group">
             <label for="form-username">Username</label>
@@ -9,12 +16,12 @@
 
         <div class="form-group">
             <label for="form-password">password</label>
-            <textarea name="password" type="password" class="form-control" id="form-password"></textarea>
+            <input name="password" type="password" class="form-control" id="form-password"></input>
         </div>
 
         @helper.CSRF.formField
 
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-primary">Login</button>
 
     </form>
 

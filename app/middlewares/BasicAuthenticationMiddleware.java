@@ -12,17 +12,13 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-
 public class BasicAuthenticationMiddleware extends Action.Simple {
-
 
     @Inject
     protected EbeanUserRepository userRepository;
 
     @Override
     public CompletionStage<Result> call(Http.Context ctx) {
-
-        //Logger.info("Request Path: " + ctx.request().method() + ": " + ctx.request().path());
 
         Optional<String> header = ctx.request().header("Authorization");
 
@@ -39,13 +35,11 @@ public class BasicAuthenticationMiddleware extends Action.Simple {
                     return delegate.call(ctx);
                 }
             }
-
         }
 
         Result result = unauthorized("Authentication required")
                 .withHeader("WWW-Authenticate", "Basic realm=Secure Area");
 
         return CompletableFuture.completedFuture(result);
-
     }
 }
