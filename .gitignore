@@ -52,7 +52,7 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 *.lnk
-dist/*
+/dist/*
 target/
 lib_managed/
 src_managed/
@@ -110,3 +110,5 @@ test-result
 server.pid
 *.eml
 /dist/
+h2.mv.db
+h2.trace.db
