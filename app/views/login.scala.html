@@ -6,23 +6,31 @@
         @flash.get("error")
         </div>
     }
+<br>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <form method="post" action="/authenticate">
+                        <div class="form-group" align="center">
+                            <label for="form-username"><h4>Username</h4></label>
+                            <input name="username" type="text" class="form-control col-md-4" id="form-username">
+                        </div>
 
-    <form method="post" action="/authenticate">
+                        <div class="form-group" align="center">
+                            <label for="form-password"><h4>Password</h4></label>
+                            <input name="password" type="password" class="form-control col-md-4" id="form-password"></input>
+                        </div>
 
-        <div class="form-group">
-            <label for="form-username">Username</label>
-            <input name="username" type="text" class="form-control" id="form-username">
+
+                        @helper.CSRF.formField
+                        <div class="form-group" align="center">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label for="form-password">password</label>
-            <input name="password" type="password" class="form-control" id="form-password"></input>
-        </div>
-
-        @helper.CSRF.formField
-
-        <button type="submit" class="btn btn-primary">Login</button>
-
-    </form>
+    </section>
 
 }

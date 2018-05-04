@@ -1,10 +1,7 @@
 package controllers;
 
 import middlewares.SessionAuthenticationMiddleware;
-import models.ChangePw;
-import models.Login;
-import models.Note;
-import models.User;
+import models.*;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
@@ -26,6 +23,7 @@ public class HomeController extends Controller {
     protected Form<Note> noteForm;
     protected Form<Login> loginForm;
     protected Form<ChangePw> changePwForm;
+    protected Form<Register> registerForm;
 
 
     @Inject
@@ -40,6 +38,7 @@ public class HomeController extends Controller {
         this.noteForm = formFactory.form(Note.class);
         this.loginForm = formFactory.form(Login.class);
         this.changePwForm = formFactory.form(ChangePw.class);
+        this.registerForm = formFactory.form(Register.class);
     }
 
 
@@ -52,7 +51,7 @@ public class HomeController extends Controller {
     }
 
     public Result signUp() {
-        return ok(views.html.signUp.render());
+        return ok(views.html.signUp.render(registerForm.fill(new Register())));
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
