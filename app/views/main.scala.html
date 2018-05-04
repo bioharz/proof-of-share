@@ -1,5 +1,5 @@
 @*
-* This template is called from the `index` template. This template
+* This template is called from the `dashboard` template. This template
 * handles the rendering of the page header and body tags. It takes
 * two arguments, a `String` for the title of the page and an `Html`
 * object to insert into the body of the page.
@@ -11,34 +11,50 @@
     <head>
         @* Here's where we render the page title `String`. *@
         <title>@title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("dependencies/bootstrap-4.1.0/dist/css/bootstrap.min.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a href="/" class="navbar-brand">Note App</a>
+                <a href="/" class="navbar-brand"><div id="brand-name">Proof-of-Share</div></a>
 
                 <ul class="navbar-nav">
-                    @if(session().get("username") != null && session().get("username") != "") {
-                        <li class="nav-item"><a href="/notes/0" class="nav-link"><button class="btn btn-light navbar-btn">
-                            New Note</button></a></li>
-                        <li class="nav-item"><a href="/changepw" class="nav-link"><button class="btn btn-warning navbar-btn">
-                            Change PW </button></a></li>
-                        <li class="nav-item"><a href="/logout" class="nav-link"><button class="btn btn-danger navbar-btn">
-                            Logout @session().get("username")</button></a></li>
-
-                    }
+                @if(session().get("username") != null && session().get("username") != "") {
+                    <li class="nav-item"><a href="/notes/0" class="nav-link"><button class="btn btn-light navbar-btn">
+                        New Note</button></a></li>
+                    <li class="nav-item"><a href="/changepw" class="nav-link"><button class="btn btn-warning navbar-btn">
+                        Change PW </button></a></li>
+                    <li class="nav-item"><a href="/logout" class="nav-link"><button class="btn btn-danger navbar-btn">
+                        Logout @session().get("username")</button></a></li>
+                } else {
+                    <li class="nav-item"><a href="/login" class="nav-link"><button class="btn btn-info navbar-btn">
+                        Login</button></a></li>
+                    <li class="nav-item"><a href="/sign-up" class="nav-link"><button class="btn btn-warning navbar-btn">
+                        Sing Up</button></a></li>
+                }
                 </ul>
 
             </div>
         </nav>
 
         <div class="container">
-        @content
+            @if(flash.containsKey("success")) {
+                <div class="alert alert-success" role="alert">
+                @flash.get("success")
+                </div>
+            }
+            @if(flash.containsKey("error")) {
+                <div class="alert alert-danger" role="alert">
+                @flash.get("error")
+                </div>
+            }
+            @content
         </div>
-
+        <script src="@routes.Assets.versioned("dependencies/jquery-3.1.1/jquery-3.3.1.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("dependencies/popper.js-1.14.0/popper.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("dependencies/bootstrap-4.1.0/dist/js/bootstrap.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
     </body>
 </html>

@@ -3,7 +3,28 @@
 # ~~~~
 
 # An example controller showing a sample home page
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!------TODO: Very Important. SECURITY RISK------!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# GET RID OF NOT FOUND ERROR MESSAGE:
+#-----------------------------------
+#Action Not Found
+#For request ........
+#-----------------------------------
+#replace is with own 4xx error page and + logger(maybe with email message)
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#These routes have been tried, in this order:
+
+
 GET     /                           controllers.HomeController.index
+
+GET     /dashboard                           controllers.HomeController.dashboard
+
+GET     /sign-up                    controllers.HomeController.signUp
 
 GET     /notes/:id                  controllers.HomeController.form(id:Integer)
 

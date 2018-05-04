@@ -42,21 +42,33 @@ public class HomeController extends Controller {
         this.changePwForm = formFactory.form(ChangePw.class);
     }
 
-    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+
+
+
     public Result index() {
 
-        User user = getSessionUser();
+        User user = getSessionUser(false);
+        return ok(views.html.index.render());
+    }
+
+    public Result signUp() {
+        return ok(views.html.signUp.render());
+    }
+
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+    public Result dashboard() {
+        User user = getSessionUser(true);
         if (user != null) {
             List<Note> notes = noteRepository.getNotes(user);
-            return ok(views.html.index.render(notes));
+            return ok(views.html.dashboard.render(notes));
         }
-        return badRequest(views.html.index.render(null));
+        return badRequest(views.html.dashboard.render(null));
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
     public Result form(int id) {
 
-        User user = getSessionUser();
+        User user = getSessionUser(true);
         if (user != null) {
             Note note = noteRepository.getNote(id, user);
             if (note == null) {
@@ -64,13 +76,13 @@ public class HomeController extends Controller {
             }
             return ok(views.html.form.render(noteForm.fill(note), categoryRepository.getCategories()));
         }
-        return badRequest(views.html.index.render(null));
+        return badRequest(views.html.dashboard.render(null));
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
     public Result save() {
 
-        User user = getSessionUser();
+        User user = getSessionUser(true);
         if (user != null) {
             Form<Note> form = noteForm.bindFromRequest();
             if (form.hasErrors()) {
@@ -87,12 +99,12 @@ public class HomeController extends Controller {
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
     public Result delete(int id) {
-        User user = getSessionUser();
+        User user = getSessionUser(true);
         if (user != null) {
             noteRepository.deleteNote(id, user);
             return ok();
         }
-        return badRequest(views.html.index.render(null));
+        return badRequest(views.html.dashboard.render(null));
     }
 
     public Result login() {
@@ -110,7 +122,7 @@ public class HomeController extends Controller {
                     session("username", user.getUsername());
                     session("isAdmin", user.getAdmin().toString());
                     return redirect(
-                            routes.HomeController.index()
+                            routes.HomeController.dashboard()
                     );
                 }
             }
@@ -128,24 +140,26 @@ public class HomeController extends Controller {
     }
 
 
-    public User getSessionUser() {
+    public User getSessionUser(boolean errorMessage) {
         String username = session().get("username");
         User user = userRepository.getUserByUsername(username);
         if (user != null) {
             return user;
         }
-        flash("error", "User not found.");
+        if (errorMessage) {
+            flash("error", "User not found.");
+        }
         return null;
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
     public Result changePwPage() {
 
-        User user = getSessionUser();
+        User user = getSessionUser(true);
         if (user != null) {
             return ok(views.html.changePassword.render(changePwForm.fill(new ChangePw())));
         }
-        return badRequest(views.html.index.render(null));
+        return badRequest(views.html.dashboard.render(null));
     }
 
     public Result changePw() {
@@ -153,7 +167,7 @@ public class HomeController extends Controller {
         Form<ChangePw> form = changePwForm.bindFromRequest();
         if (!form.hasErrors()) {
             ChangePw changePw = form.get();
-            User user = getSessionUser();
+            User user = getSessionUser(true);
             if (user != null) {
                 if (user.comparePasswords(changePw.getPasswordOld())) {
 
