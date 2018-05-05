@@ -68,3 +68,7 @@ GET           /changepw                     controllers.HomeController.changePwP
 +nocsrf
 POST          /changepw                     controllers.HomeController.changePw()
 
+# Business Controller routes
+
+POST        /business                       controllers.BusinessController.business()
+

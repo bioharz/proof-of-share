@@ -1,0 +1,43 @@
+@(form: Form[Business])
+
+@main("Create Entity") {
+
+    <br>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <form method="post" action="/whatever"><!--todo da muss noch die Methode gemacht werden-->
+                        <div class="form-group" align="center">
+                            <label for="form-username"><h4>Uri of your Twitter Post</h4></label>
+                            <input name="uri" type="text" class="form-control col-md-4" id="form-uri">
+                        </div>
+                        <div class="form-group" align="center">
+                            <label for="form-username"><h4>Original Message of Post</h4></label>
+                            <input name="textTwitter" type="text" class="form-control col-md-4" id="form-textTwitter">
+                        </div>
+                        <div class="form-group" align="center">
+                            <label for="form-username"><h4>How long should it stay online?</h4></label>
+                            <input name="date" type="date" class="form-control col-md-4" id="form-date">
+                        </div>
+                        <div class="form-group" align="center">
+                            <label for="form-username"><h4>How many BTC´s do you want to spent?</h4></label>
+                            <input name="btc" type="text" class="form-control col-md-4" id="form-btc">
+                        </div>
+                        <div class="form-group" align="center">
+                            <label for="form-username"><h4>How much is one like worth?</h4></label>
+                            <input name="like" type="text" class="form-control col-md-4" id="form-like">
+                        </div>
+
+
+                        @helper.CSRF.formField
+                        <div class="form-group" align="center">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+}
