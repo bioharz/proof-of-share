@@ -1,13 +1,13 @@
-package services;
+package dao;
 
 import io.ebean.Ebean;
-import models.Note;
-import models.User;
+import models.entities.Note;
+import models.entities.User;
 import play.Logger;
 
 import java.util.List;
 
-public class EbeanNoteRepository {
+public class NoteDao {
 
     @Deprecated
     public List<Note> getNotes() {

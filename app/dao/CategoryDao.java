@@ -1,13 +1,13 @@
-package services;
+package dao;
 
 import io.ebean.Ebean;
-import models.Category;
+import models.entities.Category;
 
 import java.util.List;
 
-public class EbeanCategoryRepository {
+public class CategoryDao {
 
-    public EbeanCategoryRepository() {
+    public CategoryDao() {
         if (Ebean.find(Category.class).findCount() <= 0) {
             Category category1 = new Category();
             category1.setTitle("Important");

@@ -1,15 +1,15 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import models.Category;
-import models.Note;
+import models.entities.Category;
+import models.entities.Note;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import services.EbeanCategoryRepository;
-import services.EbeanNoteRepository;
+import dao.CategoryDao;
+import dao.NoteDao;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -20,10 +20,10 @@ import java.util.stream.Stream;
 public class NoteController extends Controller {
 
     @Inject
-    protected EbeanNoteRepository noteRepository;
+    protected NoteDao noteRepository;
 
     @Inject
-    protected EbeanCategoryRepository categoryRepository;
+    protected CategoryDao categoryRepository;
 
 
     public Result list(String sort, String query) {

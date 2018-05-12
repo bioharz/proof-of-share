@@ -1,4 +1,4 @@
-package models;
+package models.entities;
 
 import play.Logger;
 
@@ -26,6 +26,7 @@ public class User {
     @NotNull
     protected Boolean isAdmin = false;
 
+    //TODO
     public void setPasswordInClear(String password) {
         setPassword(getHash(password));
     }

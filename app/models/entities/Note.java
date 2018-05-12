@@ -1,5 +1,7 @@
-package models;
+package models.entities;
 
+import models.entities.Category;
+import models.entities.User;
 import play.data.validation.Constraints;
 
 import javax.persistence.Entity;

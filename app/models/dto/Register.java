@@ -1,27 +1,10 @@
-package models;
+package models.dto;
 
 public class Register {
-    private String vname;
-    private String nname;
+
     private String username;
     private String password;
     private String email;
-
-    public String getVname() {
-        return vname;
-    }
-
-    public void setVname(String vname) {
-        this.vname = vname;
-    }
-
-    public String getNname() {
-        return nname;
-    }
-
-    public void setNname(String nname) {
-        this.nname = nname;
-    }
 
     public String getUsername() {
         return username;

@@ -1,15 +1,19 @@
 package controllers;
 
 import middlewares.SessionAuthenticationMiddleware;
-import models.*;
+import models.dto.ChangePw;
+import models.dto.Login;
+import models.dto.Register;
+import models.entities.Note;
+import models.entities.User;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import services.EbeanCategoryRepository;
-import services.EbeanNoteRepository;
-import services.EbeanUserRepository;
+import dao.CategoryDao;
+import dao.NoteDao;
+import dao.UserDao;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -17,9 +21,9 @@ import java.util.List;
 //@With(BasicAuthenticationMiddleware.class)
 public class HomeController extends Controller {
 
-    protected EbeanNoteRepository noteRepository;
-    protected EbeanCategoryRepository categoryRepository;
-    protected EbeanUserRepository userRepository;
+    protected NoteDao noteRepository;
+    protected CategoryDao categoryRepository;
+    protected UserDao userRepository;
     protected Form<Note> noteForm;
     protected Form<Login> loginForm;
     protected Form<ChangePw> changePwForm;
@@ -28,9 +32,9 @@ public class HomeController extends Controller {
 
     @Inject
     public HomeController(
-            EbeanNoteRepository noteRepository,
-            EbeanCategoryRepository categoryRepository,
-            EbeanUserRepository userRepository,
+            NoteDao noteRepository,
+            CategoryDao categoryRepository,
+            UserDao userRepository,
             FormFactory formFactory) {
         this.noteRepository = noteRepository;
         this.categoryRepository = categoryRepository;

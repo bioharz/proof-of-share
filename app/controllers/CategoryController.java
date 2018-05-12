@@ -1,12 +1,12 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import models.Category;
+import models.entities.Category;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import services.EbeanCategoryRepository;
+import dao.CategoryDao;
 
 import javax.inject.Inject;
 import java.util.Comparator;
@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 public class CategoryController extends Controller {
 
     @Inject
-    protected EbeanCategoryRepository categoryRepository;
+    protected CategoryDao categoryRepository;
 
     public Result list(String sort, String query) {
         Stream<Category> categories = categoryRepository.getCategories().stream();

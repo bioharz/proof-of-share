@@ -1,9 +1,9 @@
-package services;
+package dao;
 
 import io.ebean.Ebean;
-import models.User;
+import models.entities.User;
 
-public class EbeanUserRepository {
+public class UserDao {
 
     public User getUserByUsername(String username) {
         return Ebean.find(User.class)

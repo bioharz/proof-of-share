@@ -1,4 +1,4 @@
-package models;
+package models.dto;
 
 import akka.http.impl.util.JavaMapping;
 

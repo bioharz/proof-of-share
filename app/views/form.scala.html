@@ -1,3 +1,5 @@
+@import models.entities.Category
+@import models.entities.Note
 @(form:Form[Note], categories:List[Category])
 
 @main("Note form") {
@@ -42,7 +44,7 @@
 
             <select id="form-category" class="form-control" name="category.id">
             @for(category <- categories) {
-                <option @if(form("category").getValue().isPresent() && form("category").getValue().get().equals("models.Category@" + category.getId())) { selected } value="@category.getId()">@category.getTitle()</option>
+                <option @if(form("category").getValue().isPresent() && form("category").getValue().get().equals("models.entities.Category@" + category.getId())) { selected } value="@category.getId()">@category.getTitle()</option>
             }
             </select>
         </div>

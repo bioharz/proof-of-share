@@ -6,6 +6,7 @@ import play.mvc.Result;
 public class BusinessController extends Controller {
 
     public Result business() {
-        return redirect("/business");
+        return ok(views.html.business.render(null));
+
     }
 }

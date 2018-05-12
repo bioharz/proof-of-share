@@ -1,30 +1,17 @@
 package controllers;
 
-import middlewares.SessionAuthenticationMiddleware;
-import models.*;
-import play.data.Form;
-import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
-import play.mvc.Security;
-import play.mvc.With;
-import services.EbeanCategoryRepository;
-import services.EbeanNoteRepository;
-import services.EbeanUserRepository;
-import sun.net.www.http.HttpClient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class TwitterController extends Controller {
@@ -56,7 +43,7 @@ public class TwitterController extends Controller {
      * @param requestProperties: Additional header key-value-pairs.
      * @param urlParameters: What to append to URL? (e.g. id=ksdjlkdsj&ernesto=8545d)
      * @return boolean: Returns whether request was successful or not. */
-    public boolean sendRequestToTwitterAPI(@Nonnull RequestMethod requestMethod, @Nullable HashMap<String,String> requestProperties, @Nullable String urlParameters) {
+    private boolean sendRequestToTwitterAPI(@Nonnull RequestMethod requestMethod, @Nullable HashMap<String,String> requestProperties, @Nullable String urlParameters) {
         try {
             URL twitterApiUrl = new URL(TWITTER_API);
             HttpsURLConnection con = (HttpsURLConnection) twitterApiUrl.openConnection();
