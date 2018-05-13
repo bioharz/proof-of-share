@@ -1,7 +1,6 @@
 @(businesses: List[Business])
 
 @main("LikePage") {
-
     <section>
         <div class="col-md-12">
             <div class="container border col-md-4">
@@ -21,7 +20,9 @@
                                     <td>@business.getTextTwitter()</td>
                                     <td>@business.getLike()</td>
                                     <td>
-                                        <button class="submit">Like</button>
+                                        <!-- businessLike needed for Js (adding event listeners). So there might not be a valid Css class for it.
+                                            Only these btns should have this class! -->
+                                        <button class="submit businessLike" id="@business.getBusinessId()">Like</button>
                                     </td>
                                 </tr>
                             }
