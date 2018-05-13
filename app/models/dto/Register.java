@@ -4,7 +4,9 @@ public class Register {
 
     private String username;
     private String password;
+    private String passwordConfirm;
     private String email;
+    private String emailConfirm;
 
     public String getUsername() {
         return username;
@@ -28,5 +30,21 @@ public class Register {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
+    }
+
+    public String getEmailConfirm() {
+        return emailConfirm;
+    }
+
+    public void setEmailConfirm(String emailConfirm) {
+        this.emailConfirm = emailConfirm;
     }
 }

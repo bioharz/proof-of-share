@@ -54,8 +54,24 @@ public class HomeController extends Controller {
         return ok(views.html.index.render());
     }
 
-    public Result signUp() {
+    public Result signUpPage() {
         return ok(views.html.signUp.render(registerForm.fill(new Register())));
+        //return ok(views.html.signUp.render());
+
+    }
+
+    public Result signUpPost() {
+
+        User user = getSessionUser(false);
+        if(user == null){
+
+        }else {
+            flash("error", "You can't create an new account while you are logged in");
+            return badRequest(views.html.signUp.render(registerForm.fill(new Register())));
+        }
+
+        return ok();
+
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
@@ -67,6 +83,8 @@ public class HomeController extends Controller {
         }
         return badRequest(views.html.dashboard.render(null));
     }
+
+
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
     public Result form(int id) {

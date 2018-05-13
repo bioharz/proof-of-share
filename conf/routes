@@ -24,7 +24,10 @@ GET     /                           controllers.HomeController.index
 
 GET     /dashboard                           controllers.HomeController.dashboard
 
-GET     /sign-up                    controllers.HomeController.signUp
+#sign-up
+GET     /sign-up                    controllers.HomeController.signUpPage
+POST    /sign-up                    controllers.HomeController.signUpPost()
+
 
 GET     /notes/:id                  controllers.HomeController.form(id:Integer)
 

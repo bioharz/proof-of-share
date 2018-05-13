@@ -32,5 +32,22 @@
             </div>
         </div>
     </section>
+    <br>
+    <section>
+        <div class="container">
+
+        @b4.horizontal.form(routes.HomeController.signUpPost(), "col-md-2", "col-md-8") { implicit hfc =>
+            @b4.text(form("username"), '_label -> "Username", 'placeholder -> "satoshinakamoto", '_help -> "A username between 1 and 20 characters without any special character")
+            @b4.email(form("email"), '_label -> "Email", 'placeholder -> "satoshin@gmx.com", '_help -> "A valid Email-Address")
+            @b4.email(form("emailConfirm"), '_label -> "Confirm Email", 'placeholder -> "satoshin@gmx.com", '_help -> "Confirm the Email-Address")
+            @b4.password(form("password"), '_label -> "Password", 'placeholder -> "Password", '_help -> "A strong password with a minimum length of 6 and at least one special characters like !@§$%&/|\\<>°^=?#-,." )
+            @b4.password(form("passwordConfirm"), '_label -> "Confirm Password", 'placeholder -> "Confirm Password", '_help -> "Confirm your strong password")
+            @helper.CSRF.formField
+            @b4.submit('class -> "btn btn-primary") { Sign in }
+        }
+
+        </div>
+    </section>
+
 
 }
