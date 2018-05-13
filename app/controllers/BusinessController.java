@@ -8,4 +8,8 @@ public class BusinessController extends Controller {
     public Result business() {
         return redirect("/business");
     }
+
+    public Result like() {
+        return ok();
+    }
 }

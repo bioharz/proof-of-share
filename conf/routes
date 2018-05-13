@@ -72,6 +72,8 @@ POST          /changepw                     controllers.HomeController.changePw(
 
 POST        /business                       controllers.BusinessController.business()
 
+GET         /like                           controllers.BusinessController.like()
+
 
 # TWITTER - API
 POST        /api/v1/like/:postId                   controllers.TwitterController.likePost(postId:String)
