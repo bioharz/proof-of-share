@@ -6,7 +6,10 @@ addLikeEventListeners();
 /** Unfortunately, needed bc. of security policy. */
 function addLikeEventListeners() {
     for (var elem of document.getElementsByClassName('businessLike')) {
-        elem.addEventListener('click',sendTwitterLike(elem.id));
+        const elemId = elem.id;
+        elem.addEventListener('click',function () {
+            sendTwitterLike(elemId);
+        });
     }
 }
 
