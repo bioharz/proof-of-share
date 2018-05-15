@@ -1,6 +1,7 @@
 package models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.ebean.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,7 +9,7 @@ import javax.persistence.OneToMany;
 import java.util.List;
 
 @Entity
-public class Category {
+public class Category extends Model {
 
     @Id
     protected int id;
@@ -41,4 +42,5 @@ public class Category {
     public void setNotes(List<Note> notes) {
         this.notes = notes;
     }
+
 }

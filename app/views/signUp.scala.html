@@ -7,7 +7,7 @@
             @b4.text(form("username"), '_label -> "Username", 'placeholder -> "satoshinakamoto", '_help -> "A username between 4 and 20 characters without any special character")
             @b4.email(form("email"), '_label -> "Email", 'placeholder -> "satoshin@gmx.com", '_help -> "A valid Email-Address")
             @b4.email(form("repeatEmail"), '_label -> "Confirm Email", 'placeholder -> "satoshin@gmx.com", '_help -> "Confirm the Email-Address")
-            @b4.password(form("password"), '_label -> "Password", 'placeholder -> "Password", '_help -> "A strong password with a minimum length of 6 and at least one special characters like !@§$%&/|\\<>°^=?#-,." )
+            @b4.password(form("password"), '_label -> "Password", 'placeholder -> "Password", '_help -> "A strong password with a minimum length of 6 and at least one uppercase letter, one lowercase letter, one number and one special character." )
             @b4.password(form("repeatPassword"), '_label -> "Confirm Password", 'placeholder -> "Confirm Password", '_help -> "Confirm your strong password")
             @helper.CSRF.formField
             @b4.submit('class -> "btn btn-primary") { Sign in }

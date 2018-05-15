@@ -1,5 +1,6 @@
 package models.entities;
 
+import io.ebean.Model;
 import models.entities.Category;
 import models.entities.User;
 import play.data.validation.Constraints;
@@ -12,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
-public class Note {
+public class Note extends Model {
 
     @Id
     protected int id = 0;

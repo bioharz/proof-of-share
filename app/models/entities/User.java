@@ -1,5 +1,7 @@
 package models.entities;
 
+import io.ebean.Finder;
+import io.ebean.Model;
 import play.Logger;
 
 import javax.persistence.Column;
@@ -11,7 +13,7 @@ import java.security.MessageDigest;
 import java.util.List;
 
 @Entity
-public class User {
+public class User extends Model {
 
     @Id
     protected int id;
@@ -87,4 +89,9 @@ public class User {
     public void setAdmin(Boolean admin) {
         isAdmin = admin;
     }
+
+    public static final Finder<Long, User> find = new Finder<>(User.class);
+
+
+
 }

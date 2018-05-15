@@ -17,30 +17,30 @@ import play.data.validation.ValidationError;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
+
 import javax.inject.Inject;
 import java.util.List;
 
 //@With(BasicAuthenticationMiddleware.class)
 public class HomeController extends Controller {
 
-    protected NoteDao noteRepository;
-    protected CategoryDao categoryRepository;
-    protected UserDao userRepository;
+    protected NoteDao noteDao;
+    protected CategoryDao categoryDao;
+    protected UserDao userDao;
     protected Form<Note> noteForm;
     protected Form<Login> loginForm;
     protected Form<ChangePw> changePwForm;
     protected Form<Register> registerForm;
 
-
     @Inject
     public HomeController(
-            NoteDao noteRepository,
+            NoteDao noteDao,
             CategoryDao categoryRepository,
-            UserDao userRepository,
+            UserDao userDao,
             FormFactory formFactory) {
-        this.noteRepository = noteRepository;
-        this.categoryRepository = categoryRepository;
-        this.userRepository = userRepository;
+        this.noteDao = noteDao;
+        this.categoryDao = categoryRepository;
+        this.userDao = userDao;
         this.noteForm = formFactory.form(Note.class);
         this.loginForm = formFactory.form(Login.class);
         this.changePwForm = formFactory.form(ChangePw.class);
@@ -95,7 +95,7 @@ public class HomeController extends Controller {
     public Result dashboard() {
         User user = getSessionUser(true);
         if (user != null) {
-            List<Note> notes = noteRepository.getNotes(user);
+            List<Note> notes = noteDao.getNotes(user);
             return ok(views.html.dashboard.render(notes));
         }
         return badRequest(views.html.dashboard.render(null));
@@ -107,11 +107,11 @@ public class HomeController extends Controller {
 
         User user = getSessionUser(true);
         if (user != null) {
-            Note note = noteRepository.getNote(id, user);
+            Note note = noteDao.getNote(id, user);
             if (note == null) {
                 note = new Note();
             }
-            return ok(views.html.form.render(noteForm.fill(note), categoryRepository.getCategories()));
+            return ok(views.html.form.render(noteForm.fill(note), categoryDao.getCategories()));
         }
         return badRequest(views.html.dashboard.render(null));
     }
@@ -123,9 +123,9 @@ public class HomeController extends Controller {
         if (user != null) {
             Form<Note> form = noteForm.bindFromRequest();
             if (form.hasErrors()) {
-                return badRequest(views.html.form.render(form, categoryRepository.getCategories()));
+                return badRequest(views.html.form.render(form, categoryDao.getCategories()));
             } else {
-                noteRepository.saveNote(form.get(), user);
+                noteDao.saveNote(form.get(), user);
                 flash("success", "The note was successfully saved.");
                 return redirect("/");
             }
@@ -138,7 +138,7 @@ public class HomeController extends Controller {
     public Result delete(int id) {
         User user = getSessionUser(true);
         if (user != null) {
-            noteRepository.deleteNote(id, user);
+            noteDao.deleteNote(id, user);
             return ok();
         }
         return badRequest(views.html.dashboard.render(null));
@@ -152,7 +152,7 @@ public class HomeController extends Controller {
         Form<Login> form = loginForm.bindFromRequest();
         if (!form.hasErrors()) {
             Login login = form.get();
-            User user = userRepository.getUserByUsername(login.username);
+            User user = userDao.getUserByUsername(login.username);
             if (user != null) {
                 if (user.comparePasswords(login.password)) {
                     session().clear();
@@ -179,7 +179,7 @@ public class HomeController extends Controller {
 
     public User getSessionUser(boolean errorMessage) {
         String username = session().get("username");
-        User user = userRepository.getUserByUsername(username);
+        User user = userDao.getUserByUsername(username);
         if (user != null) {
             return user;
         }
@@ -210,7 +210,7 @@ public class HomeController extends Controller {
 
                     if (!changePw.getPasswordNew().equals("") && changePw.getPasswordNew().equals(changePw.getPasswordNewCheck())) {
                         user.setPasswordInClear(changePw.getPasswordNew());
-                        userRepository.updateUser(user);
+                        userDao.updateUser(user);
                         flash("success", "Password successfully changed.");
                         return redirect(routes.HomeController.index());
                     } else {
