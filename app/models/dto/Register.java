@@ -1,12 +1,42 @@
 package models.dto;
 
-public class Register {
+import models.interfaces.validation.SignUpCheck;
+import play.data.validation.Constraints;
+import play.data.validation.ValidationError;
 
+import javax.validation.groups.Default;
+import java.util.ArrayList;
+import java.util.List;
+
+@Constraints.Validate(groups = {SignUpCheck.class})
+public class Register  implements Constraints.Validatable<List<ValidationError>> {
+
+    @Constraints.Required(groups = {Default.class, SignUpCheck.class/*, LoginCheck.class*/})
+    @Constraints.MinLength(value = 4, message ="You need at least 4 chart for the username")
+    @Constraints.MaxLength(value = 20, message ="Only 20 characters are allowed")
+    //@Constraints.Required
     private String username;
+
+
+    //@Constraints.Email(groups = {Default.class, SignUpCheck.class})
+    //@Constraints.Required
+
+    @Constraints.Required(groups = {SignUpCheck.class /*, LoginCheck.class*/})
     private String password;
-    private String passwordConfirm;
+
+    //@Constraints.Required
+    @Constraints.Required(groups = {SignUpCheck.class})
+    private String repeatPassword;
+
+    @Constraints.Required(groups = {SignUpCheck.class})
+    //@Constraints.Required
+    @Constraints.Email
     private String email;
-    private String emailConfirm;
+
+    @Constraints.Required(groups = {SignUpCheck.class})
+    //@Constraints.Required
+    @Constraints.Email
+    private String repeatEmail;
 
     public String getUsername() {
         return username;
@@ -32,19 +62,38 @@ public class Register {
         this.email = email;
     }
 
-    public String getPasswordConfirm() {
-        return passwordConfirm;
+    public String getRepeatPassword() {
+        return repeatPassword;
     }
 
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
+    public void setRepeatPassword(String repeatPassword) {
+        this.repeatPassword = repeatPassword;
     }
 
-    public String getEmailConfirm() {
-        return emailConfirm;
+    public String getRepeatEmail() {
+        return repeatEmail;
     }
 
-    public void setEmailConfirm(String emailConfirm) {
-        this.emailConfirm = emailConfirm;
+    public void setRepeatEmail(String repeatEmail) {
+        this.repeatEmail = repeatEmail;
     }
+
+    @Override
+    public List<ValidationError> validate() {
+        List<ValidationError> validationErrorList = new ArrayList<>();
+        //ValidationError validationError = new ValidationError("", "");
+        if (!isEqual(password, repeatPassword)) {
+            validationErrorList.add(new ValidationError("repeatPassword", "Passwords do not match"));
+            //return new ValidationError("repeatPassword", "Passwords do not match");
+        } if(!isEqual(email, repeatEmail)) {
+            validationErrorList.add(new ValidationError("repeatEmail", "Email do not match"));
+        }
+        return validationErrorList;
+    }
+
+    private boolean isEqual(String first, String secound) {
+        return first.equals(secound);
+    }
+
+
 }

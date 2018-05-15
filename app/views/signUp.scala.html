@@ -1,51 +1,17 @@
 @import models.dto.Register
 @(form: Form[Register])
 @main("Sign Up") {
-
-    <br>
     <section>
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <form method="post" action="/authenticate">
-                        <div class="form-group" align="center">
-                            <label for="form-username"><h4>Username</h4></label>
-                            <input name="username" type="text" class="form-control col-md-4" id="form-username">
-                        </div>
-
-                        <div class="form-group" align="center">
-                            <label for="form-password"><h4>Password</h4></label>
-                            <input name="password" type="password" class="form-control col-md-4" id="form-password"></input>
-                        </div>
-                        <div class="form-group" align="center">
-                            <label for="form-username"><h4>Email</h4></label>
-                            <input name="nname" type="email" class="form-control col-md-4" id="form-nname">
-                        </div>
-
-
-                        @helper.CSRF.formField
-                        <div class="form-group" align="center">
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-    <br>
-    <section>
-        <div class="container">
-
         @b4.horizontal.form(routes.HomeController.signUpPost(), "col-md-2", "col-md-8") { implicit hfc =>
-            @b4.text(form("username"), '_label -> "Username", 'placeholder -> "satoshinakamoto", '_help -> "A username between 1 and 20 characters without any special character")
+            @b4.text(form("username"), '_label -> "Username", 'placeholder -> "satoshinakamoto", '_help -> "A username between 4 and 20 characters without any special character")
             @b4.email(form("email"), '_label -> "Email", 'placeholder -> "satoshin@gmx.com", '_help -> "A valid Email-Address")
-            @b4.email(form("emailConfirm"), '_label -> "Confirm Email", 'placeholder -> "satoshin@gmx.com", '_help -> "Confirm the Email-Address")
+            @b4.email(form("repeatEmail"), '_label -> "Confirm Email", 'placeholder -> "satoshin@gmx.com", '_help -> "Confirm the Email-Address")
             @b4.password(form("password"), '_label -> "Password", 'placeholder -> "Password", '_help -> "A strong password with a minimum length of 6 and at least one special characters like !@§$%&/|\\<>°^=?#-,." )
-            @b4.password(form("passwordConfirm"), '_label -> "Confirm Password", 'placeholder -> "Confirm Password", '_help -> "Confirm your strong password")
+            @b4.password(form("repeatPassword"), '_label -> "Confirm Password", 'placeholder -> "Confirm Password", '_help -> "Confirm your strong password")
             @helper.CSRF.formField
             @b4.submit('class -> "btn btn-primary") { Sign in }
         }
-
         </div>
     </section>
 

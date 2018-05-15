@@ -1,20 +1,22 @@
 package controllers;
 
+import dao.CategoryDao;
+import dao.NoteDao;
+import dao.UserDao;
 import middlewares.SessionAuthenticationMiddleware;
 import models.dto.ChangePw;
 import models.dto.Login;
 import models.dto.Register;
 import models.entities.Note;
 import models.entities.User;
+import models.interfaces.validation.SignUpCheck;
+import play.Logger;
 import play.data.Form;
 import play.data.FormFactory;
+import play.data.validation.ValidationError;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
-import dao.CategoryDao;
-import dao.NoteDao;
-import dao.UserDao;
-
 import javax.inject.Inject;
 import java.util.List;
 
@@ -42,36 +44,51 @@ public class HomeController extends Controller {
         this.noteForm = formFactory.form(Note.class);
         this.loginForm = formFactory.form(Login.class);
         this.changePwForm = formFactory.form(ChangePw.class);
-        this.registerForm = formFactory.form(Register.class);
+        //this.registerForm = formFactory.form(Register.class);
+        //Form<PartialUserForm> form = formFactory().form(PartialUserForm.class, SignUpCheck.class).bindFromRequest();
+        this.registerForm = formFactory.form(Register.class, SignUpCheck.class);
     }
-
-
 
 
     public Result index() {
 
-        User user = getSessionUser(false);
+        User user = getSessionUser(false); //TODO: What's that???
         return ok(views.html.index.render());
     }
 
     public Result signUpPage() {
         return ok(views.html.signUp.render(registerForm.fill(new Register())));
-        //return ok(views.html.signUp.render());
 
     }
 
     public Result signUpPost() {
 
         User user = getSessionUser(false);
-        if(user == null){
+        if (user == null) {
+            Form<Register> form = registerForm.bindFromRequest();
+            if (!form.hasErrors()) {
+                flash("success", "Data submitted");
+                return badRequest(views.html.signUp.render(form));
+            } else {
+                List<ValidationError> errors = form.allErrors();
+                StringBuilder errorMessages = new StringBuilder();
+                for (ValidationError validationError : errors
+                        ) {
+                    String errorMessage = validationError.message();
+                    Logger.error("signUpPost validation error: " + errorMessage);
+                    errorMessages.append(errorMessage + ", ");
 
-        }else {
+                }
+                if (errorMessages.length() > 1) {
+                    errorMessages.deleteCharAt(errorMessages.length() - 2);
+                }
+                flash("error", "Data validation error: " + errorMessages.toString());
+                return badRequest(views.html.signUp.render(form));
+            }
+        } else {
             flash("error", "You can't create an new account while you are logged in");
             return badRequest(views.html.signUp.render(registerForm.fill(new Register())));
         }
-
-        return ok();
-
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
@@ -83,7 +100,6 @@ public class HomeController extends Controller {
         }
         return badRequest(views.html.dashboard.render(null));
     }
-
 
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
