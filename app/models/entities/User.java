@@ -23,9 +23,6 @@ public class User extends Model {
     
     protected String password;
 
-    @OneToMany
-    protected List<Note> notes;
-
     @NotNull
     protected Boolean isAdmin = false;
 
@@ -78,14 +75,6 @@ public class User extends Model {
     @Deprecated
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public List<Note> getNotes() {
-        return notes;
-    }
-
-    public void setNotes(List<Note> notes) {
-        this.notes = notes;
     }
 
     public Boolean getAdmin() {

@@ -1,0 +1,36 @@
+@(businesses: List[Business])
+
+@main("LikePage") {
+    <section>
+        <div class="col-md-12">
+            <div class="container border col-md-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading"><h2>Like this:</h2></div>
+                    <div class="panel-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Twitter Post</th>
+                                    <th>Reward</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @for(business <- businesses) {
+                                <tr>
+                                    <td>@business.getTextTwitter()</td>
+                                    <td>@business.getLike()</td>
+                                    <td>
+                                        <!-- businessLike needed for Js (adding event listeners). So there might not be a valid Css class for it.
+                                            Only these btns should have this class! -->
+                                        <button class="submit businessLike" id="@business.getBusinessId()">Like</button>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

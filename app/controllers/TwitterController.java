@@ -1,10 +1,15 @@
 package controllers;
 
+import play.data.DynamicForm;
+import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
+import scala.Dynamic;
+import play.data.Form;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -18,6 +23,7 @@ public class TwitterController extends Controller {
     private static final String TAG = "TwitterController";
     private static final String TWITTER_API = "https://api.twitter.com/1.1/favorites/create.json";
     private static final String USER_AGENT = "Mozilla/5.0";
+    private FormFactory formFactory;
 
     public enum RequestMethod {
         POST("POST"),GET("GET"),DELETE("DELETE"),PUT("PUT");
@@ -33,8 +39,24 @@ public class TwitterController extends Controller {
         }
     }
 
-    public Result likePost(@Nonnull String postId) {
-        boolean likeSuccessful = sendRequestToTwitterAPI(RequestMethod.POST,null,"id="+postId);
+    @Inject
+    public TwitterController(FormFactory formFactory) {
+        this.formFactory = formFactory;
+    }
+
+
+
+    //METHODS ++++++++++++++++++++++++++++++++++++
+    public Result likePost() {
+        boolean likeSuccessful = false;
+
+        //Get postId from request
+        DynamicForm form = this.formFactory.form().bindFromRequest();
+        String postId = form.get("postId");
+
+        if (postId != null && !postId.equals("")) { //otherwise we return false anyway
+            likeSuccessful = sendRequestToTwitterAPI(RequestMethod.POST, null, "id=" + postId);
+        }
 
         return (likeSuccessful) ? ok("Like successful.") : badRequest("Could not like post with id: "+postId);
     }
@@ -43,7 +65,7 @@ public class TwitterController extends Controller {
      * @param requestProperties: Additional header key-value-pairs.
      * @param urlParameters: What to append to URL? (e.g. id=ksdjlkdsj&ernesto=8545d)
      * @return boolean: Returns whether request was successful or not. */
-    private boolean sendRequestToTwitterAPI(@Nonnull RequestMethod requestMethod, @Nullable HashMap<String,String> requestProperties, @Nullable String urlParameters) {
+    public boolean sendRequestToTwitterAPI(@Nonnull RequestMethod requestMethod, @Nullable HashMap<String,String> requestProperties, @Nullable String urlParameters) {
         try {
             URL twitterApiUrl = new URL(TWITTER_API);
             HttpsURLConnection con = (HttpsURLConnection) twitterApiUrl.openConnection();
