@@ -93,8 +93,7 @@ public class HomeController extends Controller {
                 }
                 flash("success", "User created");
                 setUserSession(newUser);
-                List<Note> dummy = new ArrayList<>(); //TODO: Just dummy, please change this.
-                return ok(views.html.dashboard.render(dummy));
+                return redirect("/dashboard");
             } else {
                 List<ValidationError> errors = form.allErrors();
                 StringBuilder errorMessages = new StringBuilder();

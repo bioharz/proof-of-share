@@ -1,6 +1,6 @@
 package controllers;
 
-import models.Business;
+import models.dto.Business;
 import play.mvc.Controller;
 import play.mvc.Result;
 

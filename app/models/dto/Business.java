@@ -1,11 +1,11 @@
 package models.dto;
 
-import akka.http.impl.util.JavaMapping;
+import io.ebean.Model;
 
 import javax.annotation.Nonnull;
 import java.util.Date;
 
-public class Business {
+public class Business extends Model {
 
     private String businessId; //needed bc. you want to allow the same post published multiple times
     private String postId;
@@ -25,7 +25,6 @@ public class Business {
         this.setLike(like);
     }
 
-    //GETTER/SETTER -------------------------------------
     public String getPostId() {
         return postId;
     }
