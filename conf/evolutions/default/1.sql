@@ -24,6 +24,7 @@ create table user (
   username                      varchar(255),
   password                      varchar(255),
   is_admin                      boolean not null,
+  email                         varchar(255) not null,
   constraint uq_user_username unique (username),
   constraint pk_user primary key (id)
 );

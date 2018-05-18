@@ -20,6 +20,7 @@ public class User extends Model {
 
     @Column(unique = true)
     protected String username;
+    
     protected String password;
 
     @OneToMany
@@ -27,6 +28,9 @@ public class User extends Model {
 
     @NotNull
     protected Boolean isAdmin = false;
+
+    @NotNull
+    protected String email;
 
     //TODO
     public void setPasswordInClear(String password) {
@@ -66,10 +70,12 @@ public class User extends Model {
         this.username = username;
     }
 
+
     public String getPassword() {
         return password;
     }
 
+    @Deprecated
     public void setPassword(String password) {
         this.password = password;
     }
@@ -92,6 +98,15 @@ public class User extends Model {
 
     public static final Finder<Long, User> find = new Finder<>(User.class);
 
+    public String getEmail() {
+        return email;
+    }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
+    public static Finder<Long, User> getFind() {
+        return find;
+    }
 }

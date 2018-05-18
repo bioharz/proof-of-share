@@ -19,6 +19,7 @@ import play.mvc.Result;
 import play.mvc.Security;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 //@With(BasicAuthenticationMiddleware.class)
@@ -67,8 +68,33 @@ public class HomeController extends Controller {
         if (user == null) {
             Form<Register> form = registerForm.bindFromRequest();
             if (!form.hasErrors()) {
-                flash("success", "Data submitted");
-                return badRequest(views.html.signUp.render(form));
+                //flash("success", "Data submitted");
+                if(userDao.getUserByUsername(form.get().getUsername()) != null) {
+                    flash("error", "Username is already taken, please use another one.");
+                    return badRequest(views.html.signUp.render(form)); //WTF???????
+                }
+                User newUser = new User();
+                newUser.setUsername(form.get().getUsername());
+                newUser.setPasswordInClear(form.get().getPassword());
+                newUser.setAdmin(false);
+                newUser.setEmail(form.get().getEmail());
+
+                try {
+                    userDao.updateUser(newUser);
+                    if (newUser.getId() >= 0) {
+                        Logger.info("User ID >= : "+newUser.getId());
+                    } else {
+                        Logger.info("User ID <= : "+newUser.getId()+"!!!");
+                    }
+                } catch (Exception e) {
+                    Logger.error("Error: "+e);
+                    flash("error", "Something goes wrong while creating a new user.");
+                    return badRequest(views.html.signUp.render(form));
+                }
+                flash("success", "User created");
+                setUserSession(newUser);
+                List<Note> dummy = new ArrayList<>(); //TODO: Just dummy, please change this.
+                return ok(views.html.dashboard.render(dummy));
             } else {
                 List<ValidationError> errors = form.allErrors();
                 StringBuilder errorMessages = new StringBuilder();
@@ -155,9 +181,7 @@ public class HomeController extends Controller {
             User user = userDao.getUserByUsername(login.username);
             if (user != null) {
                 if (user.comparePasswords(login.password)) {
-                    session().clear();
-                    session("username", user.getUsername());
-                    session("isAdmin", user.getAdmin().toString());
+                    setUserSession(user);
                     return redirect(
                             routes.HomeController.dashboard()
                     );
@@ -167,6 +191,14 @@ public class HomeController extends Controller {
         flash("error", "Bad credentials.");
         return redirect(routes.HomeController.login());
     }
+
+
+    private void setUserSession(User user){
+        session().clear();
+        session("username", user.getUsername());
+        session("isAdmin", user.getAdmin().toString());
+    }
+
 
     public Result logout() {
         session().clear();

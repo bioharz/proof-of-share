@@ -17,8 +17,9 @@ public class UserDao {
         }
     }
 
-    public void updateUser(User user) {
+    public User updateUser(User user) {
         Ebean.save(user);
+        return user;
     }
 
     public void deleteUser(int id) {
