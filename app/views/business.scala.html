@@ -1,8 +1,7 @@
-@import models.dto.Business
+@
+import models.dto.Business
 @(form: Form[Business])
-
 @main("Create Entity") {
-
     <br>
     <section>
         <div class="container">
@@ -29,8 +28,6 @@
                             <label for="form-username"><h4>How much is one like worth?</h4></label>
                             <input name="like" type="text" class="form-control col-md-4" id="form-like">
                         </div>
-
-
                         @helper.CSRF.formField
                         <div class="form-group" align="center">
                             <button type="submit" class="btn btn-primary">Login</button>
@@ -40,5 +37,4 @@
             </div>
         </div>
     </section>
-
 }

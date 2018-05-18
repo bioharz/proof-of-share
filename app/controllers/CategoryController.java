@@ -1,17 +1,16 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import dao.CategoryDao;
 import models.entities.Category;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import dao.CategoryDao;
 
 import javax.inject.Inject;
 import java.util.Comparator;
 import java.util.stream.Stream;
-
 public class CategoryController extends Controller {
 
     @Inject

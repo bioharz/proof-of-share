@@ -1,8 +1,6 @@
 @import models.entities.Note
 @(notes: List[Note])
-
 @main("Dashboard") {
-
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -10,7 +8,6 @@
             </li>
         </ol>
     </nav>
-
     <table class="table">
         <thead>
             <tr>
@@ -47,5 +44,4 @@
         }
         </tbody>
     </table>
-
 }
