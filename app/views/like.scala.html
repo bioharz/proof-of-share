@@ -1,5 +1,5 @@
+@import models.dto.Business
 @(businesses: List[Business])
-
 @main("LikePage") {
     <section>
         <div class="col-md-12">
@@ -20,7 +20,7 @@
                                     <td>@business.getTextTwitter()</td>
                                     <td>@business.getLike()</td>
                                     <td>
-                                        <!-- businessLike needed for Js (adding event listeners). So there might not be a valid Css class for it.
+                                            <!-- businessLike needed for Js (adding event listeners). So there might not be a valid Css class for it.
                                             Only these btns should have this class! -->
                                         <button class="submit businessLike" id="@business.getBusinessId()">Like</button>
                                     </td>

@@ -23,6 +23,8 @@
 
                 <ul class="navbar-nav">
                 @if(session().get("username") != null && session().get("username") != "") {
+                    <li class="nav-item"><a href="/dashboard" class="nav-link"><button class="btn btn-secondary navbar-btn">
+                        Dashboard</button></a></li>
                     <li class="nav-item"><a href="/notes/0" class="nav-link"><button class="btn btn-light navbar-btn">
                         New Note</button></a></li>
                     <li class="nav-item"><a href="/changepw" class="nav-link"><button class="btn btn-warning navbar-btn">
@@ -36,24 +38,24 @@
                         Sing Up</button></a></li>
                 }
                 </ul>
-
             </div>
         </nav>
-
-
-
-
-
 
         <div class="container">
             @if(flash.containsKey("success")) {
                 <div class="alert alert-success" role="alert">
-                @flash.get("success")
+                    @flash.get("success")
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             }
             @if(flash.containsKey("error")) {
                 <div class="alert alert-danger" role="alert">
-                @flash.get("error")
+                    @flash.get("error")
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             }
             @content

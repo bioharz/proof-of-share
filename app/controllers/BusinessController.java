@@ -1,17 +1,15 @@
 package controllers;
 
-import models.Business;
+import models.dto.Business;
 import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 public class BusinessController extends Controller {
-
     public Result business() {
-        return redirect("/business");
+        return ok(views.html.business.render(null));
     }
 
     public Result like() {

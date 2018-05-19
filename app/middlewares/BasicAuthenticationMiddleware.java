@@ -1,10 +1,10 @@
 package middlewares;
 
-import models.User;
+import models.entities.User;
 import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
-import services.EbeanUserRepository;
+import dao.UserDao;
 
 import javax.inject.Inject;
 import java.util.Base64;
@@ -15,7 +15,7 @@ import java.util.concurrent.CompletionStage;
 public class BasicAuthenticationMiddleware extends Action.Simple {
 
     @Inject
-    protected EbeanUserRepository userRepository;
+    protected UserDao userRepository;
 
     @Override
     public CompletionStage<Result> call(Http.Context ctx) {

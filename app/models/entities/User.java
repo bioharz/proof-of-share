@@ -1,5 +1,7 @@
-package models;
+package models.entities;
 
+import io.ebean.Finder;
+import io.ebean.Model;
 import play.Logger;
 
 import javax.persistence.Column;
@@ -11,18 +13,23 @@ import java.security.MessageDigest;
 import java.util.List;
 
 @Entity
-public class User {
+public class User extends Model {
 
     @Id
     protected int id;
 
     @Column(unique = true)
     protected String username;
+    
     protected String password;
 
     @NotNull
     protected Boolean isAdmin = false;
 
+    @NotNull
+    protected String email;
+
+    //TODO
     public void setPasswordInClear(String password) {
         setPassword(getHash(password));
     }
@@ -60,10 +67,12 @@ public class User {
         this.username = username;
     }
 
+
     public String getPassword() {
         return password;
     }
 
+    @Deprecated
     public void setPassword(String password) {
         this.password = password;
     }
@@ -74,5 +83,19 @@ public class User {
 
     public void setAdmin(Boolean admin) {
         isAdmin = admin;
+    }
+
+    public static final Finder<Long, User> find = new Finder<>(User.class);
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public static Finder<Long, User> getFind() {
+        return find;
     }
 }
