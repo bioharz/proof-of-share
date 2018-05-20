@@ -79,3 +79,9 @@ GET         /like                           controllers.BusinessController.like(
 # TWITTER - API
 POST        /api/v1/like                   controllers.TwitterController.likePost
 
+
+
+GET         /css/style.css                  controllers.HomeController.css
+GET         /particles.js                   controllers.HomeController.particles
+GET         /js/lib/stats.js                controllers.HomeController.stats
+

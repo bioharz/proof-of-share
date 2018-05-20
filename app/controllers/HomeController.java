@@ -262,4 +262,16 @@ public class HomeController extends Controller {
         return redirect(routes.HomeController.changePwPage());
     }
 
+    public Result css() {
+        return ok();
+    }
+
+    public Result particles() {
+        return ok();
+    }
+
+    public Result stats() {
+        return ok();
+    }
+
 }
