@@ -1,13 +1,10 @@
 package controllers;
 
-import dao.CategoryDao;
-import dao.NoteDao;
 import dao.UserDao;
 import middlewares.SessionAuthenticationMiddleware;
 import models.dto.ChangePw;
 import models.dto.Login;
 import models.dto.Register;
-import models.entities.Note;
 import models.entities.User;
 import models.interfaces.validation.SignUpCheck;
 import play.Logger;
@@ -19,30 +16,21 @@ import play.mvc.Result;
 import play.mvc.Security;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 //@With(BasicAuthenticationMiddleware.class)
 public class HomeController extends Controller {
 
-    protected NoteDao noteDao;
-    protected CategoryDao categoryDao;
     protected UserDao userDao;
-    protected Form<Note> noteForm;
     protected Form<Login> loginForm;
     protected Form<ChangePw> changePwForm;
     protected Form<Register> registerForm;
 
     @Inject
     public HomeController(
-            NoteDao noteDao,
-            CategoryDao categoryRepository,
             UserDao userDao,
             FormFactory formFactory) {
-        this.noteDao = noteDao;
-        this.categoryDao = categoryRepository;
         this.userDao = userDao;
-        this.noteForm = formFactory.form(Note.class);
         this.loginForm = formFactory.form(Login.class);
         this.changePwForm = formFactory.form(ChangePw.class);
         //this.registerForm = formFactory.form(Register.class);
@@ -116,58 +104,6 @@ public class HomeController extends Controller {
         }
     }
 
-    @Security.Authenticated(SessionAuthenticationMiddleware.class)
-    public Result dashboard() {
-        User user = getSessionUser(true);
-        if (user != null) {
-            List<Note> notes = noteDao.getNotes(user);
-            return ok(views.html.dashboard.render(notes));
-        }
-        return badRequest(views.html.dashboard.render(null));
-    }
-
-
-    @Security.Authenticated(SessionAuthenticationMiddleware.class)
-    public Result form(int id) {
-
-        User user = getSessionUser(true);
-        if (user != null) {
-            Note note = noteDao.getNote(id, user);
-            if (note == null) {
-                note = new Note();
-            }
-            return ok(views.html.form.render(noteForm.fill(note), categoryDao.getCategories()));
-        }
-        return badRequest(views.html.dashboard.render(null));
-    }
-
-    @Security.Authenticated(SessionAuthenticationMiddleware.class)
-    public Result save() {
-
-        User user = getSessionUser(true);
-        if (user != null) {
-            Form<Note> form = noteForm.bindFromRequest();
-            if (form.hasErrors()) {
-                return badRequest(views.html.form.render(form, categoryDao.getCategories()));
-            } else {
-                noteDao.saveNote(form.get(), user);
-                flash("success", "The note was successfully saved.");
-                return redirect("/");
-            }
-        }
-        return badRequest(views.html.form.render(null, null));
-
-    }
-
-    @Security.Authenticated(SessionAuthenticationMiddleware.class)
-    public Result delete(int id) {
-        User user = getSessionUser(true);
-        if (user != null) {
-            noteDao.deleteNote(id, user);
-            return ok();
-        }
-        return badRequest(views.html.dashboard.render(null));
-    }
 
     public Result login() {
         return ok(views.html.login.render(loginForm.fill(new Login())));
@@ -182,7 +118,7 @@ public class HomeController extends Controller {
                 if (user.comparePasswords(login.password)) {
                     setUserSession(user);
                     return redirect(
-                            routes.HomeController.dashboard()
+                            routes.HomeController.index()
                     );
                 }
             }
