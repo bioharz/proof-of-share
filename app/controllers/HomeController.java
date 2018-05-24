@@ -163,7 +163,7 @@ public class HomeController extends Controller {
         if (user != null) {
             return ok(views.html.changePassword.render(changePwForm.fill(new ChangePw())));
         }
-        return badRequest(views.html.dashboard.render(null));
+        return badRequest(views.html.index.render());
     }
 
     public Result changePw() {
