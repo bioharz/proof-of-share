@@ -15,7 +15,8 @@ public class BusinessController extends Controller {
     public Result like() {
         //TODO: Just for testing
         List<Business> businessList = new ArrayList<>();
-        businessList.add(new Business("555","15s6df5sdf","Beispieltext",new Date(),1,2));
+        businessList.add(new Business("555","1000418875702472710","Should work.",new Date(),1,2));
+        businessList.add(new Business("22","-1","Should not work",new Date(),2,3));
         return ok(views.html.like.render(businessList));
     }
 }

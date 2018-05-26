@@ -18,3 +18,8 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 libraryDependencies ++= Seq(
   "com.adrianhurt" %% "play-bootstrap" % "1.4-P26-B4-SNAPSHOT"
 )
+
+//Needed for twitter api
+libraryDependencies ++= Seq(
+  "org.twitter4j" % "twitter4j-core" % "4.0.4"
+)
