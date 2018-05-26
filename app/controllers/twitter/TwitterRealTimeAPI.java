@@ -20,12 +20,13 @@ import play.Logger;
 
 import javax.inject.Singleton;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Singleton
-public class TwitterRealTimeController {
+public class TwitterRealTimeAPI {
 
     static private String consumerKey = "";
     static private String consumerSecret = "";
@@ -33,13 +34,13 @@ public class TwitterRealTimeController {
     static private String accessSecret = "";
 
     private static void loadConfig() {
-        Config config = ConfigFactory.load("twitter").getConfig("twitter-secrets");
-        consumerKey = config.getString("CONSUMER_KEY");
-        consumerSecret = config.getString("CONSUMER_SECRET");
-        accessToken = config.getString("ACCESS_TOKEN");
-        accessSecret = config.getString("ACCESS_SECRET");
-    }
 
+        HashMap<String, String> configs = TwitterGetConfig.loadConfig();
+        consumerKey = configs.get(consumerKey);
+        consumerSecret = configs.get(consumerSecret);
+        accessToken = configs.get(accessToken);
+        accessSecret = configs.get(accessSecret);
+    }
 
     public static void main(String[] args) {
 

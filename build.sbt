@@ -23,7 +23,7 @@ libraryDependencies ++= Seq(
 libraryDependencies += "com.twitter" % "hbc-core" % "2.2.0"
 
 // https://mvnrepository.com/artifact/com.twitter/hbc-twitter4j
-//libraryDependencies += "com.twitter" % "hbc-twitter4j" % "2.2.0"
+libraryDependencies += "com.twitter" % "hbc-twitter4j" % "2.2.0"
 
 // https://mvnrepository.com/artifact/commons-lang/commons-lang
 libraryDependencies += "commons-lang" % "commons-lang" % "2.2"
