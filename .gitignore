@@ -112,3 +112,4 @@ server.pid
 /dist/
 h2.mv.db
 h2.trace.db
+conf/twitter.conf

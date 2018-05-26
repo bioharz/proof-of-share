@@ -18,3 +18,12 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 libraryDependencies ++= Seq(
   "com.adrianhurt" %% "play-bootstrap" % "1.4-P26-B4-SNAPSHOT"
 )
+
+// https://mvnrepository.com/artifact/com.twitter/hbc-core
+libraryDependencies += "com.twitter" % "hbc-core" % "2.2.0"
+
+// https://mvnrepository.com/artifact/com.twitter/hbc-twitter4j
+//libraryDependencies += "com.twitter" % "hbc-twitter4j" % "2.2.0"
+
+// https://mvnrepository.com/artifact/commons-lang/commons-lang
+libraryDependencies += "commons-lang" % "commons-lang" % "2.2"
