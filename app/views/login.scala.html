@@ -1,11 +1,6 @@
 @import models.dto.Login
 @(form: Form[Login])
     @main("Login") {
-        @if(flash.containsKey("error")) {
-            <div class="alert alert-danger" role="alert">
-            @flash.get("error")
-            </div>
-        }
         <br>
         <section>
             <div class="container">

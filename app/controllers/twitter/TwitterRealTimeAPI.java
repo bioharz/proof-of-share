@@ -36,10 +36,10 @@ public class TwitterRealTimeAPI {
     private static void loadConfig() {
 
         HashMap<String, String> configs = TwitterGetConfig.loadConfig();
-        consumerKey = configs.get(consumerKey);
-        consumerSecret = configs.get(consumerSecret);
-        accessToken = configs.get(accessToken);
-        accessSecret = configs.get(accessSecret);
+        consumerKey = configs.get("consumerKey");
+        consumerSecret = configs.get("consumerSecret");
+        accessToken = configs.get("accessToken");
+        accessSecret = configs.get("accessSecret");
     }
 
     public static void main(String[] args) {

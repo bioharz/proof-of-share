@@ -1,10 +1,11 @@
-@import models.dto.Register
-@(form: Form[Register])
+@import models.dto.RegisterDto
+@(form: Form[RegisterDto])
 @main("Sign Up") {
     <section>
         <div class="container">
         @b4.horizontal.form(routes.HomeController.signUpPost(), "col-md-2", "col-md-8") { implicit hfc =>
             @b4.text(form("username"), '_label -> "Username", 'placeholder -> "satoshinakamoto", '_help -> "A username between 4 and 20 characters without any special character")
+            @b4.text(form("twitterScreenName"), '_label -> "TwitterScreenName", 'placeholder -> "@proofofshare1", '_help -> "a valid TweeterScreenName with @")
             @b4.email(form("email"), '_label -> "Email", 'placeholder -> "satoshin@gmx.com", '_help -> "A valid Email-Address")
             @b4.email(form("repeatEmail"), '_label -> "Confirm Email", 'placeholder -> "satoshin@gmx.com", '_help -> "Confirm the Email-Address")
             @b4.password(form("password"), '_label -> "Password", 'placeholder -> "Password", '_help -> "A strong password with a minimum length of 6 and at least one uppercase letter, one lowercase letter, one number and one special character." )
@@ -14,6 +15,4 @@
         }
         </div>
     </section>
-
-
 }

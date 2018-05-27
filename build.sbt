@@ -19,8 +19,9 @@ libraryDependencies ++= Seq(
   "com.adrianhurt" %% "play-bootstrap" % "1.4-P26-B4-SNAPSHOT"
 )
 
-// https://mvnrepository.com/artifact/com.twitter/hbc-core
-libraryDependencies += "com.twitter" % "hbc-core" % "2.2.0"
+// https://mvnrepository.com/artifact/org.twitter4j/twitter4j-core
+libraryDependencies += "org.twitter4j" % "twitter4j-core" % "4.0.6"
+
 
 // https://mvnrepository.com/artifact/com.twitter/hbc-twitter4j
 libraryDependencies += "com.twitter" % "hbc-twitter4j" % "2.2.0"

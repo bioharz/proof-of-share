@@ -7,10 +7,8 @@ import play.Logger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.security.MessageDigest;
-import java.util.List;
 
 @Entity
 public class User extends Model {
@@ -20,6 +18,9 @@ public class User extends Model {
 
     @Column(unique = true)
     protected String username;
+
+    @Column(unique = true)
+    protected String twitterScreenName;
     
     protected String password;
 
@@ -93,6 +94,14 @@ public class User extends Model {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getTwitterScreenName() {
+        return twitterScreenName;
+    }
+
+    public void setTwitterScreenName(String twitterScreenName) {
+        this.twitterScreenName = twitterScreenName;
     }
 
     public static Finder<Long, User> getFind() {
