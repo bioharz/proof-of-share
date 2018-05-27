@@ -5,10 +5,7 @@ import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
+import twitter4j.*;
 import twitter4j.auth.AccessToken;
 
 import javax.annotation.Nonnull;
@@ -71,8 +68,10 @@ public class TwitterController extends Controller implements ITwitterController 
             //Also catch numberFormatException to avoid people sending randomData to crash our application.
             System.out.println("likePost-> Could not like post with id: "+postId);
             e.printStackTrace();
-            resultMsg = "Could not like post with id: "+postId+"\nReason: "+e.getLocalizedMessage();
+            resultMsg = "Could not like post with id: "+postId+" - Reason: "+e.getLocalizedMessage();
         }
+        resultMsg = "{\"msg\":\""+resultMsg.replace("\n","").replace("\r","")+"\"}";
+        System.out.println(resultMsg);
         return (wasSuccessful) ? ok(resultMsg) : badRequest(resultMsg);
     }
 
