@@ -29,11 +29,11 @@ GET     /sign-up                    controllers.HomeController.signUpPage
 POST    /sign-up                    controllers.HomeController.signUpPost()
 
 
-GET     /notes/:id                  controllers.HomeController.form(id:Integer)
+GET     /tweet/:id                  controllers.HomeController.form(id:Integer)
 
-POST    /notes                      controllers.HomeController.save
+POST    /tweet                      controllers.HomeController.save
 
-DELETE  /notes/:id                  controllers.HomeController.delete(id:Integer)
+DELETE  /tweet/:id                  controllers.HomeController.delete(id:Integer)
 
 # API v1
 #GET     /api/v1/categories          controllers.CategoryController.list(sort: String ?=null, query: String ?=null)
@@ -50,14 +50,14 @@ DELETE  /notes/:id                  controllers.HomeController.delete(id:Integer
 GET           /assets/*file                 controllers.Assets.versioned(path="/public", file: Asset)
 
 #+nocsrf
-#POST          /api/v1/notes                 controllers.NoteController.save()
+#POST          /api/v1/twitterBountyCampaigns                 controllers.TweetControllerr.save()
 
-##PUT     /api/v1/notes:id:         nocsrf on PUT is broken. Please use POST with json id. thx
-##try... notes/:id: for fix
+##PUT     /api/v1/twitterBountyCampaigns:id:         nocsrf on PUT is broken. Please use POST with json id. thx
+##try... twitterBountyCampaigns/:id: for fix
 
-#GET           /api/v1/notes                 controllers.NoteController.list(sort: String ?=null, query: String ?=null)
+#GET           /api/v1/twitterBountyCampaigns                 controllers.TweetControllerr.list(sort: String ?=null, query: String ?=null)
 
-#DELETE        /api/v1/notes/:id             controllers.NoteController.delete(id:Integer)
+#DELETE        /api/v1/twitterBountyCampaigns/:id             controllers.TweetControllerr.delete(id:Integer)
 
 # user managment
 GET           /login                        controllers.HomeController.login()

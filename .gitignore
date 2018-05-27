@@ -112,3 +112,7 @@ server.pid
 /dist/
 h2.mv.db
 h2.trace.db
+conf/twitter.conf
+
+#TODO: I'm not sure this is a good idea on prod enviroment. But for now(dev), this can fix some issue
+conf/evolutions
