@@ -1,23 +1,33 @@
 @()
 @main("Dashboard") {
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/particle-js.css")">
-    <div id="particles-js"></div>
+    <div id="particles-js">
+        <div class="container col-md-12 body-particles">
     <div class="row">
-        <div class="col-md-1"> </div>
-        <div class="col-md-4" align="center">
+        <div class="col-md-2"> </div>
+        <div id="box" class="col-md-4" align="center">
             <p></p>
             <form method="post" action="/business">
-                <button type="submit" class="btn btn-info"><h1>Create new Likes</h1></button>
+                <button id="boxes" type="submit" class="btn btn-info"><h1>Create new Likes</h1></button>
             </form>
         </div>
         <div class="col-md-1"> </div>
-        <div class="col-md-4" align="center">
+        <div id="box" class="col-md-4" align="center">
             <p> </p>
             <form method="get" action="/like">
-                <button type="submit" class="btn btn-warning"><h1>Like for Money</h1></button>
+                <button id="boxes" type="submit" class="btn btn-warning"><h1>Like for Money</h1></button>
             </form>
         </div>
     </div>
+    </div>
+    </div>
+
+
     <script src="@routes.Assets.versioned("dependencies/particles.js-2.0.0/particles.js")" type="text/javascript"></script>
     <script src="@routes.Assets.versioned("javascripts/index.js")" type="text/javascript"></script>
+    <script>
+            particlesJS.load('particles-js', 'particles.json', function () {
+                console.log('particles.json loaded');
+            });
+    </script>
 }
