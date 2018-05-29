@@ -1,10 +1,13 @@
 package controllers;
 
+import controllers.twitter.TwitterGetAPI;
+import dao.TwitterBountyCampaignDao;
 import dao.UserDao;
 import middlewares.SessionAuthenticationMiddleware;
 import models.dto.ChangePw;
 import models.dto.Login;
-import models.dto.Register;
+import models.dto.RegisterDto;
+import models.entities.TwitterBountyCampaign;
 import models.entities.User;
 import models.interfaces.validation.SignUpCheck;
 import play.Logger;
@@ -14,6 +17,7 @@ import play.data.validation.ValidationError;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
+import twitter4j.Status;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -21,21 +25,28 @@ import java.util.List;
 //@With(BasicAuthenticationMiddleware.class)
 public class HomeController extends Controller {
 
+    protected TwitterBountyCampaignDao twitterBountyCampaignDao;
     protected UserDao userDao;
+    protected Form<TwitterBountyCampaign> twitterBountyCampaignForm;
     protected Form<Login> loginForm;
     protected Form<ChangePw> changePwForm;
-    protected Form<Register> registerForm;
+    protected Form<RegisterDto> registerForm;
+    protected TwitterGetAPI twitterGetAPI;
 
     @Inject
     public HomeController(
+            TwitterBountyCampaignDao twitterBountyCampaignDao,
             UserDao userDao,
-            FormFactory formFactory) {
+            FormFactory formFactory, TwitterGetAPI twitterGetAPI) {
+        this.twitterBountyCampaignDao = twitterBountyCampaignDao;
         this.userDao = userDao;
+        this.twitterBountyCampaignForm = formFactory.form(TwitterBountyCampaign.class);
         this.loginForm = formFactory.form(Login.class);
         this.changePwForm = formFactory.form(ChangePw.class);
-        //this.registerForm = formFactory.form(Register.class);
+        //this.registerForm = formFactory.form(RegisterDto.class);
         //Form<PartialUserForm> form = formFactory().form(PartialUserForm.class, SignUpCheck.class).bindFromRequest();
-        this.registerForm = formFactory.form(Register.class, SignUpCheck.class);
+        this.registerForm = formFactory.form(RegisterDto.class, SignUpCheck.class);
+        this.twitterGetAPI = twitterGetAPI;
     }
 
 
@@ -46,7 +57,7 @@ public class HomeController extends Controller {
     }
 
     public Result signUpPage() {
-        return ok(views.html.signUp.render(registerForm.fill(new Register())));
+        return ok(views.html.signUp.render(registerForm.fill(new RegisterDto())));
 
     }
 
@@ -54,15 +65,24 @@ public class HomeController extends Controller {
 
         User user = getSessionUser(false);
         if (user == null) {
-            Form<Register> form = registerForm.bindFromRequest();
+            Form<RegisterDto> form = registerForm.bindFromRequest();
             if (!form.hasErrors()) {
-                //flash("success", "Data submitted");
-                if(userDao.getUserByUsername(form.get().getUsername()) != null) {
-                    flash("error", "Username is already taken, please use another one.");
-                    return badRequest(views.html.signUp.render(form)); //WTF???????
+                if (userDao.getUserByUsername(form.get().getUsername()) != null) {
+                    String errorMessage = "Username is already taken, please use another one.";
+                    flash("error", errorMessage);
+                    Logger.error(errorMessage);
+                    return badRequest(views.html.signUp.render(form));
                 }
                 User newUser = new User();
                 newUser.setUsername(form.get().getUsername());
+                twitter4j.User twitterUser = twitterGetAPI.getUser(form.get().getTwitterScreenName());
+                if(twitterUser == null){
+                    String errorMessage = "Can't find TwitterScreenName.";
+                    flash("error", errorMessage);
+                    Logger.error(errorMessage);
+                    return badRequest(views.html.signUp.render(form));
+                }
+                newUser.setTwitterScreenName(twitterUser.getScreenName());
                 newUser.setPasswordInClear(form.get().getPassword());
                 newUser.setAdmin(false);
                 newUser.setEmail(form.get().getEmail());
@@ -70,12 +90,12 @@ public class HomeController extends Controller {
                 try {
                     userDao.updateUser(newUser);
                     if (newUser.getId() >= 0) {
-                        Logger.info("User ID >= : "+newUser.getId());
+                        Logger.info("User ID >= : " + newUser.getId());
                     } else {
-                        Logger.info("User ID <= : "+newUser.getId()+"!!!");
+                        Logger.info("User ID <= : " + newUser.getId() + "!!!");
                     }
                 } catch (Exception e) {
-                    Logger.error("Error: "+e);
+                    Logger.error("Error: " + e);
                     flash("error", "Something goes wrong while creating a new user.");
                     return badRequest(views.html.signUp.render(form));
                 }
@@ -100,10 +120,68 @@ public class HomeController extends Controller {
             }
         } else {
             flash("error", "You can't create an new account while you are logged in");
-            return badRequest(views.html.signUp.render(registerForm.fill(new Register())));
+            return badRequest(views.html.signUp.render(registerForm.fill(new RegisterDto())));
         }
     }
 
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+    public Result dashboard() {
+        User user = getSessionUser(true);
+        if (user != null) {
+            List<TwitterBountyCampaign> twitterBountyCampaign = twitterBountyCampaignDao.getTweets(user);
+            return ok(views.html.dashboard.render(twitterBountyCampaign));
+        }
+        return badRequest(views.html.dashboard.render(null));
+    }
+
+
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+    public Result form(int id) {
+
+        User user = getSessionUser(true);
+        if (user != null) {
+            TwitterBountyCampaign TwitterBountyCampaign = twitterBountyCampaignDao.getTweet(id, user);
+            if (TwitterBountyCampaign == null) {
+                TwitterBountyCampaign = new TwitterBountyCampaign();
+            }
+            return ok(views.html.newTwitterBountyCampaign.render(twitterBountyCampaignForm.fill(TwitterBountyCampaign)));
+        }
+        return badRequest(views.html.dashboard.render(null));
+    }
+
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+    public Result save() {
+        User user = getSessionUser(true);
+        if (user != null) {
+            Form<TwitterBountyCampaign> form = twitterBountyCampaignForm.bindFromRequest();
+            if (form.hasErrors()) {
+                return badRequest(views.html.newTwitterBountyCampaign.render(form));
+            }
+            Status status = twitterGetAPI.getStatus(form.get().getTweetId());
+            if (status == null) {
+                String errorMessage = "Bad Twitter status-ID.";
+                flash("error", errorMessage);
+                Logger.error(errorMessage);
+                return badRequest(views.html.newTwitterBountyCampaign.render(form));
+            }
+            TwitterBountyCampaign twitterBountyCampaign = form.get();
+            twitterBountyCampaign.setTwitterScreenName(status.getUser().getScreenName());
+            twitterBountyCampaignDao.saveTweets(twitterBountyCampaign, user);
+            flash("success", "The TwitterBountyCampaign was successfully saved.");
+            return redirect("/dashboard");
+        }
+        return badRequest(views.html.newTwitterBountyCampaign.render(null));
+    }
+
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+    public Result delete(int id) {
+        User user = getSessionUser(true);
+        if (user != null) {
+            twitterBountyCampaignDao.deleteTweet(id, user);
+            return ok();
+        }
+        return badRequest(views.html.dashboard.render(null));
+    }
 
     public Result login() {
         return ok(views.html.login.render(loginForm.fill(new Login())));
@@ -118,7 +196,7 @@ public class HomeController extends Controller {
                 if (user.comparePasswords(login.password)) {
                     setUserSession(user);
                     return redirect(
-                            routes.HomeController.index()
+                            routes.HomeController.dashboard()
                     );
                 }
             }
@@ -128,7 +206,7 @@ public class HomeController extends Controller {
     }
 
 
-    private void setUserSession(User user){
+    private void setUserSession(User user) {
         session().clear();
         session("username", user.getUsername());
         session("isAdmin", user.getAdmin().toString());
@@ -163,7 +241,7 @@ public class HomeController extends Controller {
         if (user != null) {
             return ok(views.html.changePassword.render(changePwForm.fill(new ChangePw())));
         }
-        return badRequest(views.html.index.render());
+        return badRequest(views.html.dashboard.render(null));
     }
 
     public Result changePw() {
