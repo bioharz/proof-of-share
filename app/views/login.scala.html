@@ -1,9 +1,27 @@
 @import models.dto.Login
 @(form: Form[Login])
     @main("Login") {
+<<<<<<< Updated upstream
         <br>
         <section>
             <div class="container">
+=======
+<<<<<<< HEAD
+        @if(flash.containsKey("error")) {
+            <div class="alert alert-danger" role="alert">
+            @flash.get("error")
+            </div>
+        }
+
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/particle-js.css")">
+    <div id="particles-js">
+            <div class="container col-md-12 body-particles">
+=======
+        <br>
+        <section>
+            <div class="container">
+>>>>>>> d28496abebecafbb2405afd1f458f52a5c8df13b
+>>>>>>> Stashed changes
                 <div class="row">
                     <div class="col-md-2"></div>
                     <div id="login" class="col-md-8">
