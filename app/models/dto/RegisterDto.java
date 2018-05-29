@@ -8,12 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Constraints.Validate(groups = {SignUpCheck.class})
-public class Register implements Constraints.Validatable<List<ValidationError>> {
+public class RegisterDto implements Constraints.Validatable<List<ValidationError>> {
 
     @Constraints.Required(groups = {SignUpCheck.class})
     @Constraints.MinLength(groups = {SignUpCheck.class}, value = 4, message = "You need at least 4 chars for the username")
     @Constraints.MaxLength(groups = {SignUpCheck.class}, value = 20, message = "Only 20 characters are allowed")
     private String username;
+
+    @Constraints.Required(groups = {SignUpCheck.class}, message = "We need a valid TweeterScreenName")
+    private String twitterScreenName;
 
     @Constraints.MinLength(groups = {SignUpCheck.class}, value = 6, message = "You need at least 6 chars for the password")
     @Constraints.MaxLength(groups = {SignUpCheck.class}, value = 42, message = "Only 42 characters are allowed")
@@ -75,6 +78,14 @@ public class Register implements Constraints.Validatable<List<ValidationError>> 
         this.repeatEmail = repeatEmail;
     }
 
+    public String getTwitterScreenName() {
+        return twitterScreenName;
+    }
+
+    public void setTwitterScreenName(String twitterScreenName) {
+        this.twitterScreenName = twitterScreenName;
+    }
+
     @Override
     public List<ValidationError> validate() {
         List<ValidationError> validationErrorList = new ArrayList<>();
@@ -90,6 +101,5 @@ public class Register implements Constraints.Validatable<List<ValidationError>> 
     private boolean isEqual(String first, String second) {
         return first.equals(second);
     }
-
 
 }
