@@ -35,6 +35,10 @@ POST    /tweet                      controllers.HomeController.save
 
 DELETE  /tweet/:id                  controllers.HomeController.delete(id:Integer)
 
+GET     /balance                    controllers.HomeController.balance()
+
+POST    /claim-satoshi              controllers.HomeController.claimSatoshi
+
 # API v1
 #GET     /api/v1/categories          controllers.CategoryController.list(sort: String ?=null, query: String ?=null)
 

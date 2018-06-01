@@ -4,7 +4,8 @@
 * two arguments, a `String` for the title of the page and an `Html`
 * object to insert into the body of the page.
 *@
-@(title: String)(content: Html)
+@import models.entities.User
+@(title: String, user: User)(content: Html)
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -21,7 +22,9 @@
                 <a href="/" class="navbar-brand"><div id="brand-name">Proof-of-Share</div></a>
 
                 <ul class="navbar-nav">
-                @if(session().get("username") != null && session().get("username") != "") {
+                @if(user != null && user.getUsername != "") {
+                    <li class="nav-item"><a href="/balance" class="nav-link"><button class="btn btn-info navbar-btn">
+                        Balance:  <div class="badge badge-light" id="user-satoshi-balance">@user.getSatoshiBalance</div> sat</button></a></li>
                     <li class="nav-item"><a href="/dashboard" class="nav-link"><button class="btn btn-secondary navbar-btn">
                         Dashboard</button></a></li>
                     <li class="nav-item"><a href="/tweet/0" class="nav-link"><button class="btn btn-light navbar-btn">
@@ -29,7 +32,7 @@
                     <li class="nav-item"><a href="/changepw" class="nav-link"><button class="btn btn-warning navbar-btn">
                         Change PW </button></a></li>
                     <li class="nav-item"><a href="/logout" class="nav-link"><button class="btn btn-danger navbar-btn">
-                        Logout @session().get("username")</button></a></li>
+                        Logout @user.getUsername</button></a></li>
                 } else {
                     <li class="nav-item"><a href="/login" class="nav-link"><button class="btn btn-info navbar-btn">
                         Login</button></a></li>

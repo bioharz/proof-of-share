@@ -23,6 +23,7 @@ create table user (
   password                      varchar(255),
   is_admin                      boolean not null,
   email                         varchar(255) not null,
+  satoshi_balance               bigint not null,
   constraint uq_user_username unique (username),
   constraint uq_user_twitter_screen_name unique (twitter_screen_name),
   constraint pk_user primary key (id)

@@ -29,19 +29,19 @@ public class TwitterBountyCampaign extends Model implements Constraints.Validata
     protected String twitterScreenName;
 
     //@NotNull
-    @Constraints.MinLength(groups = {TwitterBountyCampaignCheck.class}, value = 1, message = "Please spend at least 1 Satoshis per reTweet")
-    @Constraints.MaxLength(groups = {TwitterBountyCampaignCheck.class}, value = 10000, message = "Only a total amount of 10000 Satoshis were allowed per reTweet")
+    @Constraints.Min(groups = {TwitterBountyCampaignCheck.class}, value = 1, message = "Please spend at least 1 Satoshis per reTweet")
+    @Constraints.Max(groups = {TwitterBountyCampaignCheck.class}, value = 10000, message = "Only a total amount of 10000 Satoshis were allowed per reTweet")
     protected long satoshiPerReTweet;// = 0;
 
     //@NotNull
-    @Constraints.MinLength(groups = {TwitterBountyCampaignCheck.class}, value = 1, message = "Please spend at least 1 Satoshis per like")
-    @Constraints.MaxLength(groups = {TwitterBountyCampaignCheck.class}, value = 10000, message = "Only a total amount of 10000 Satoshis were allowed per like")
+    @Constraints.Min(groups = {TwitterBountyCampaignCheck.class}, value = 1, message = "Please spend at least 1 Satoshis per like")
+    @Constraints.Max(groups = {TwitterBountyCampaignCheck.class}, value = 10000, message = "Only a total amount of 10000 Satoshis were allowed per like")
     protected long satoshiPerLike;// = 0;
 
     @NotNull
     @Constraints.Required(groups = {TwitterBountyCampaignCheck.class})
-    @Constraints.MinLength(groups = {TwitterBountyCampaignCheck.class}, value = 10000, message = "Please spend at least 10000 Satoshis on that campaign")
-    @Constraints.MaxLength(groups = {TwitterBountyCampaignCheck.class}, value = 1000000, message = "Only a total amount of 1000000 Satoshis were allowed per campaign")
+    @Constraints.Min(groups = {TwitterBountyCampaignCheck.class}, value = 10000, message = "Please spend at least 10000 Satoshis on that campaign")
+    @Constraints.Max(groups = {TwitterBountyCampaignCheck.class}, value = 1000000, message = "Only a total amount of 1000000 Satoshis were allowed per campaign")
     protected long totalSatoshiToSpend;
 
     protected int created;

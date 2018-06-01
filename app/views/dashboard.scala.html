@@ -1,6 +1,7 @@
 @import models.entities.TwitterBountyCampaign
-@(twitterBountyCampaigns: List[TwitterBountyCampaign])
-@main("Dashboard") {
+@import models.entities.User
+@(twitterBountyCampaigns: List[TwitterBountyCampaign], user: User)
+@main("Dashboard", user) {
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -12,7 +13,9 @@
         <thead>
             <tr>
                 <th>Tweet-ID</th>
-                <th>Satoshi left</th>
+                <th>Sat per retweet</th>
+                <th>Sat per like</th>
+                <th>Sat left</th>
                 <th>Created</th>
                 @if(session().get("isAdmin") != null && session().get("isAdmin") == "true") {
                     <th>User</th>
@@ -24,7 +27,10 @@
         @for(twitterBountyCampaign <- twitterBountyCampaigns) {
             <tr>
                 <td>@twitterBountyCampaign.getTweetId()</td>
+                <td>@twitterBountyCampaign.getSatoshiPerReTweet</td>
+                <td>@twitterBountyCampaign.getSatoshiPerLike</td>
                 <td>@twitterBountyCampaign.getTotalSatoshiToSpend</td>
+
                 <td>@twitterBountyCampaign.getCreatedFormatted()</td>
                 @if(session().get("isAdmin") != null && session().get("isAdmin") == "true") {
                     <td>@twitterBountyCampaign.getUser().getUsername</td>
