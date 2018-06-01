@@ -309,4 +309,16 @@ public class HomeController extends Controller {
         return badRequest(views.html.newTwitterBountyCampaign.render(null, null));
     }
 
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+    public Result resetBalance() {
+        User user = getSessionUser(true);
+        if (user != null) {
+            user.setSatoshiBalance(0);
+            userDao.updateUser(user);
+            flash("success", " account balance set to 0 Satoshi");
+            return ok(views.html.balance.render(claimSatoshiForm, user));
+        }
+        return badRequest(views.html.newTwitterBountyCampaign.render(null, null));
+    }
+
 }

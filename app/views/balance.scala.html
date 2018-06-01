@@ -1,28 +1,32 @@
 @import models.entities.User
 @import models.dto.ClaimSatoshiDto
 @(form: Form[ClaimSatoshiDto], user: User)
-@main("Balance", user) {
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="/">Balance</a>
-            </li>
-        </ol>
-    </nav>
+    @main("Balance", user) {
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">Balance</a>
+                </li>
+            </ol>
+        </nav>
 
-    @if(user != null){
-        <section>
-            <div class="container">
-            @b4.horizontal.form(routes.HomeController.claimSatoshi(), "col-md-2", "col-md-8") { implicit hfc =>
+        @if(user != null) {
+            <section>
+                <div class="container">
+                @b4.horizontal.form(routes.HomeController.claimSatoshi(), "col-md-2", "col-md-8") { implicit hfc =>
                     @*TODO: this looks ugly...*@
-@*                @b4.static("Current balance"){ <span class="badge badge-info">@user.getSatoshiBalance Satoshi</span> }*@
-                @b4.text(form("satoshi"), '_label -> "Satoshi to claim", 'placeholder -> "10000", '_help -> "A value between 1-1000000 Satoshi")
-                @helper.CSRF.formField
-                @b4.submit('class -> "btn btn-info") { Claim Satoshi }
-            }
-            </div>
-        </section>
+                    @* @b4.static("Current balance"){ <span class="badge badge-info">@user.getSatoshiBalance Satoshi</span> }*@
+                    @b4.text(form("satoshi"), '_label -> "Satoshi to claim", 'placeholder -> "10000", '_help -> "A value between 1-1000000 Satoshi")
+                    @helper.CSRF.formField
+                    @b4.submit('class -> "btn btn-info") { Claim Satoshi }
+                }
+                    @b4.horizontal.form(routes.HomeController.resetBalance(), "col-md-2", "col-md-8") { implicit hfc =>
+                        @helper.CSRF.formField
+                        @b4.submit('class -> "btn btn-warning") { Reset Balance to 0 Sat }
+                    }
+                </div>
+            </section>
+        }
+
+
     }
-
-
-}
