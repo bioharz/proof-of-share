@@ -10,7 +10,8 @@ create table twitter_bounty_campaign (
   satoshi_per_re_tweet          bigint not null,
   satoshi_per_like              bigint not null,
   total_satoshi_to_spend        bigint not null,
-  last_edited                   integer not null,
+  created                       integer not null,
+  disabled                      boolean default false not null,
   user_id                       integer,
   constraint pk_twitter_bounty_campaign primary key (id)
 );

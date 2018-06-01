@@ -2,7 +2,6 @@ package dao;
 
 import io.ebean.Ebean;
 import models.entities.TwitterBountyCampaign;
-import models.entities.TwitterBountyCampaign;
 import models.entities.User;
 import play.Logger;
 
@@ -53,36 +52,37 @@ public class TwitterBountyCampaignDao {
     }
 
     @Deprecated
-    public void saveTweets(TwitterBountyCampaign TwitterBountyCampaign) {
-        TwitterBountyCampaign.setLastEdited((int) (System.currentTimeMillis() / 1000L));
+    public void saveTweets(TwitterBountyCampaign twitterBountyCampaign) {
+        twitterBountyCampaign.setCreated((int) (System.currentTimeMillis() / 1000L));
 
-        if (TwitterBountyCampaign.getId() > 0) {
-            Ebean.update(TwitterBountyCampaign);
+        if (twitterBountyCampaign.getId() > 0) {
+            Ebean.update(twitterBountyCampaign);
         } else {
-            Ebean.save(TwitterBountyCampaign);
+            Ebean.save(twitterBountyCampaign);
         }
     }
 
-    public void saveTweets(TwitterBountyCampaign TwitterBountyCampaign, User user) {
+    public void saveTweets(TwitterBountyCampaign twitterBountyCampaign, User user) {
 
-        TwitterBountyCampaign.setLastEdited((int) (System.currentTimeMillis() / 1000L));
         if (user.getAdmin()) {
-            if (TwitterBountyCampaign.getId() > 0) {
-                Ebean.update(TwitterBountyCampaign);
+            if (twitterBountyCampaign.getId() > 0) {
+                Ebean.update(twitterBountyCampaign);
             } else {
-                Ebean.save(TwitterBountyCampaign);
+                twitterBountyCampaign.setCreated((int) (System.currentTimeMillis() / 1000L));
+                Ebean.save(twitterBountyCampaign);
             }
         } else {
-            if (TwitterBountyCampaign.getId() > 0) {
-                TwitterBountyCampaign noteOld = getTweet(TwitterBountyCampaign.getId());
+            if (twitterBountyCampaign.getId() > 0) {
+                TwitterBountyCampaign noteOld = getTweet(twitterBountyCampaign.getId());
                 if (noteOld.getUser().equals(user)) { //TODO: I have no clue if this will work
-                    Ebean.update(TwitterBountyCampaign);
+                    Ebean.update(twitterBountyCampaign);
                 } else {
                     Logger.error("Don't get me wrong, but i think your code is broken. See TwitterBountyCampaignDao, saveTweets(id, user)");
                 }
             } else {
-                TwitterBountyCampaign.setUser(user);
-                Ebean.save(TwitterBountyCampaign);
+                twitterBountyCampaign.setCreated((int) (System.currentTimeMillis() / 1000L));
+                twitterBountyCampaign.setUser(user);
+                Ebean.save(twitterBountyCampaign);
             }
         }
     }
@@ -94,13 +94,12 @@ public class TwitterBountyCampaignDao {
 
     public void deleteTweet(int id, User user) {
         if (user != null) {
-            TwitterBountyCampaign TwitterBountyCampaign = getTweet(id);
-            if (TwitterBountyCampaign.getUser().equals(user)) { //TODO: I have no clue if this will work
+            TwitterBountyCampaign twitterBountyCampaign = getTweet(id);
+            if (twitterBountyCampaign.getUser().equals(user)) { //TODO: I have no clue if this will work
                 Ebean.delete(TwitterBountyCampaign.class, id);
             } else {
                 Logger.error("Don't get me wrong, but i think your code is broken. See TwitterBountyCampaignDao, deleteTweet(id, user)");
             }
         }
     }
-
 }

@@ -13,7 +13,7 @@
             <tr>
                 <th>Tweet-ID</th>
                 <th>Satoshi left</th>
-                <th>Last Edited</th>
+                <th>Created</th>
                 @if(session().get("isAdmin") != null && session().get("isAdmin") == "true") {
                     <th>User</th>
                 }
@@ -25,18 +25,18 @@
             <tr>
                 <td>@twitterBountyCampaign.getTweetId()</td>
                 <td>@twitterBountyCampaign.getTotalSatoshiToSpend</td>
-                <td>@twitterBountyCampaign.getLastEditedFormatted()</td>
+                <td>@twitterBountyCampaign.getCreatedFormatted()</td>
                 @if(session().get("isAdmin") != null && session().get("isAdmin") == "true") {
                     <td>@twitterBountyCampaign.getUser().getUsername</td>
                 }
                 <td>
                     <a class="btn btn-primary" target="_blank" href="https://twitter.com/@twitterBountyCampaign.getTwitterScreenName()/status/@twitterBountyCampaign.getTweetId()">Show Tweet</a>
-
-                    <a class="btn btn-success" href="/notes/@twitterBountyCampaign.getId()">Edit</a>
-                    @if(session().get("isAdmin") != null && session().get("isAdmin") == "true" &&
+                    @if(/*session().get("isAdmin") != null && session().get("isAdmin") == "true" &&*/
                             session().get("username") != null && session().get("username") != twitterBountyCampaign.getUser.getUsername) {
+                        <a class="btn btn-success disabled" href="/tweet/@twitterBountyCampaign.getId()">Edit</a>
                         <button data-action="delete" data-id="@twitterBountyCampaign.getId()" class="btn btn-danger" disabled>Delete</button>
                     } else {
+                        <a class="btn btn-success" href="/tweet/@twitterBountyCampaign.getId()">Edit</a>
                         <button data-action="delete" data-id="@twitterBountyCampaign.getId()" class="btn btn-danger">Delete</button>
                     }
                 </td>

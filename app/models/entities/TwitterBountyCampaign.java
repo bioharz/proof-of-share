@@ -44,7 +44,9 @@ public class TwitterBountyCampaign extends Model implements Constraints.Validata
     @Constraints.MaxLength(groups = {TwitterBountyCampaignCheck.class}, value = 1000000, message = "Only a total amount of 1000000 Satoshis were allowed per campaign")
     protected long totalSatoshiToSpend;
 
-    protected int lastEdited;
+    protected int created;
+
+    protected boolean disabled = false;
 
     @ManyToOne
     protected User user;
@@ -65,16 +67,16 @@ public class TwitterBountyCampaign extends Model implements Constraints.Validata
         this.tweetId = tweetId;
     }
 
-    public int getLastEdited() {
-        return lastEdited;
+    public int getCreated() {
+        return created;
     }
 
-    public void setLastEdited(int lastEdited) {
-        this.lastEdited = lastEdited;
+    public void setCreated(int created) {
+        this.created = created;
     }
 
-    public String getLastEditedFormatted() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(this.lastEdited * 1000L));
+    public String getCreatedFormatted() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date(this.created * 1000L));
     }
 
     public User getUser() {
@@ -132,5 +134,13 @@ public class TwitterBountyCampaign extends Model implements Constraints.Validata
             validationErrorList.add(new ValidationError("satoshiPerReTweet", errorMessage));
         }
         return validationErrorList;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 }

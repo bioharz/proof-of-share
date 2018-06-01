@@ -128,7 +128,7 @@ public class HomeController extends Controller {
     public Result dashboard() {
         User user = getSessionUser(true);
         if (user != null) {
-            List<TwitterBountyCampaign> twitterBountyCampaign = twitterBountyCampaignDao.getTweets(user);
+            List<TwitterBountyCampaign> twitterBountyCampaign = twitterBountyCampaignDao.getTweets();
             return ok(views.html.dashboard.render(twitterBountyCampaign));
         }
         return badRequest(views.html.dashboard.render(null));
