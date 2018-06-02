@@ -15,6 +15,13 @@ public class TwitterBountyCampaignDao {
     }
 
 
+    public TwitterBountyCampaign getTweetByTweetId(long tweetId){
+        return Ebean.find(TwitterBountyCampaign.class)
+                .where()
+                .eq("tweetId", tweetId)
+                .findOne();
+    }
+
     public List<TwitterBountyCampaign> getTweets(User user) {
         if (user.getAdmin()) {
             return Ebean.find(TwitterBountyCampaign.class)
@@ -52,39 +59,53 @@ public class TwitterBountyCampaignDao {
     }
 
     @Deprecated
-    public void saveTweets(TwitterBountyCampaign twitterBountyCampaign) {
+    public boolean saveTweets(TwitterBountyCampaign twitterBountyCampaign) {
         twitterBountyCampaign.setCreated((int) (System.currentTimeMillis() / 1000L));
 
-        if (twitterBountyCampaign.getId() > 0) {
-            Ebean.update(twitterBountyCampaign);
-        } else {
-            Ebean.save(twitterBountyCampaign);
-        }
-    }
-
-    public void saveTweets(TwitterBountyCampaign twitterBountyCampaign, User user) {
-
-        if (user.getAdmin()) {
+        try {
             if (twitterBountyCampaign.getId() > 0) {
                 Ebean.update(twitterBountyCampaign);
             } else {
-                twitterBountyCampaign.setCreated((int) (System.currentTimeMillis() / 1000L));
                 Ebean.save(twitterBountyCampaign);
             }
-        } else {
-            if (twitterBountyCampaign.getId() > 0) {
-                TwitterBountyCampaign noteOld = getTweet(twitterBountyCampaign.getId());
-                if (noteOld.getUser().equals(user)) { //TODO: I have no clue if this will work
+            return true;
+        } catch (Exception e) {
+            Logger.error("error while saving a new twitter: " + e);
+            return false;
+        }
+    }
+
+    public boolean saveTweets(TwitterBountyCampaign twitterBountyCampaign, User user) {
+
+        try {
+
+            if (user.getAdmin()) {
+                if (twitterBountyCampaign.getId() > 0) {
                     Ebean.update(twitterBountyCampaign);
                 } else {
-                    Logger.error("Don't get me wrong, but i think your code is broken. See TwitterBountyCampaignDao, saveTweets(id, user)");
+                    twitterBountyCampaign.setCreated((int) (System.currentTimeMillis() / 1000L));
+                    Ebean.save(twitterBountyCampaign);
                 }
             } else {
-                twitterBountyCampaign.setCreated((int) (System.currentTimeMillis() / 1000L));
-                twitterBountyCampaign.setUser(user);
-                Ebean.save(twitterBountyCampaign);
+                if (twitterBountyCampaign.getId() > 0) {
+                    TwitterBountyCampaign noteOld = getTweet(twitterBountyCampaign.getId());
+                    if (noteOld.getUser().equals(user)) { //TODO: I have no clue if this will work
+                        Ebean.update(twitterBountyCampaign);
+                    } else {
+                        Logger.error("Don't get me wrong, but i think your code is broken. See TwitterBountyCampaignDao, saveTweets(id, user)");
+                    }
+                } else {
+                    twitterBountyCampaign.setCreated((int) (System.currentTimeMillis() / 1000L));
+                    twitterBountyCampaign.setUser(user);
+                    Ebean.save(twitterBountyCampaign);
+                }
             }
+            return true;
+        } catch (Exception e) {
+            Logger.error("error while saving a new twitter: " + e);
+            return false;
         }
+
     }
 
     @Deprecated

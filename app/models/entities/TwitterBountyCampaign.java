@@ -5,6 +5,7 @@ import models.interfaces.validation.TwitterBountyCampaignCheck;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -23,6 +24,7 @@ public class TwitterBountyCampaign extends Model implements Constraints.Validata
     protected int id; // = 0;
 
     @NotNull
+    @Column(unique = true)
     @Constraints.Required(groups = {TwitterBountyCampaignCheck.class})
     protected long tweetId;
 

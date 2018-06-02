@@ -8,7 +8,10 @@ if (tbody) {
             if (confirmDelete) {
                 fetch('/tweet/' + e.target.dataset.id, {
                     method: 'DELETE',
-                    credentials: 'include'
+                    credentials: 'include',
+                    headers: {
+                        'content-type': 'application/x-www-form-urlencoded'
+                    }
                 }).then(function() {
                     location.reload();
                 });

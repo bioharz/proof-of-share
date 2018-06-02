@@ -134,7 +134,7 @@ public class HomeController extends Controller {
             List<TwitterBountyCampaign> twitterBountyCampaign = twitterBountyCampaignDao.getTweets();
             return ok(views.html.dashboard.render(twitterBountyCampaign, user));
         }
-        return badRequest(views.html.dashboard.render(null, null));
+        return badAuth();
     }
 
 
@@ -149,7 +149,7 @@ public class HomeController extends Controller {
             }
             return ok(views.html.newTwitterBountyCampaign.render(twitterBountyCampaignForm.fill(TwitterBountyCampaign), user));
         }
-        return badRequest(views.html.dashboard.render(null, null));
+        return badAuth();
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
@@ -160,20 +160,70 @@ public class HomeController extends Controller {
             if (form.hasErrors()) {
                 return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
             }
-            Status status = twitterGetAPI.getStatus(form.get().getTweetId());
+            TwitterBountyCampaign twitterBountyCampaign = form.get();
+
+            if(twitterBountyCampaignDao.getTweetByTweetId(twitterBountyCampaign.getTweetId()) != null){
+                String errorMessage = "The tweet-id is already registered";
+                flash("error", errorMessage);
+                Logger.error(errorMessage);
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+            }
+
+            if(user.getSatoshiBalance() < twitterBountyCampaign.getTotalSatoshiToSpend()){
+                String errorMessage = "You have not enough Satoshi in your account.";
+                flash("error", errorMessage);
+                Logger.error(errorMessage);
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+                //!!!----A layer of fear---!!!
+            } else if (twitterBountyCampaign.getTotalSatoshiToSpend() <= 0){
+                String errorMessage = "Total Satoshi to spend have to be greater than 0.";
+                flash("error", errorMessage);
+                Logger.error(errorMessage);
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+            }
+            Status status = twitterGetAPI.getStatus(twitterBountyCampaign.getTweetId());
             if (status == null) {
                 String errorMessage = "Bad Twitter status-ID.";
                 flash("error", errorMessage);
                 Logger.error(errorMessage);
                 return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
             }
-            TwitterBountyCampaign twitterBountyCampaign = form.get();
-            twitterBountyCampaign.setTwitterScreenName(status.getUser().getScreenName());
-            twitterBountyCampaignDao.saveTweets(twitterBountyCampaign, user);
-            flash("success", "The TwitterBountyCampaign was successfully saved.");
-            return redirect("/dashboard");
+
+            //!!!---Just another layer of paranoia. Probably a useless one.---!!!
+            Long oldUserBalance = user.getSatoshiBalance();
+            Long newUserBalance = oldUserBalance-twitterBountyCampaign.getTotalSatoshiToSpend();
+            if(newUserBalance < 0){
+                String errorMessage = "You have not enough Satoshi in your account.";
+                flash("error", errorMessage);
+                Logger.error(errorMessage);
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+            } else if(newUserBalance > oldUserBalance){
+                flash("error", "Nice try!");
+                Logger.error("User tried to steal money from us!");
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+            }
+            user.setSatoshiBalance(newUserBalance);
+            userDao.updateUser(user);
+            User tempUser = userDao.getUserByUsername(user.getUsername());
+            boolean successfulSaved = false;
+            if(tempUser != null  && tempUser.getSatoshiBalance() == newUserBalance && tempUser.getSatoshiBalance() == user.getSatoshiBalance()) {
+                twitterBountyCampaign.setTwitterScreenName(status.getUser().getScreenName());
+                successfulSaved = twitterBountyCampaignDao.saveTweets(twitterBountyCampaign, user);
+                if(successfulSaved) {
+                flash("success", "The TwitterBountyCampaign was successfully saved.");
+                return redirect("/dashboard");
+                }
+            } else {
+                user.setSatoshiBalance(oldUserBalance);
+                userDao.updateUser(user);
+                flash("error", "Something horrible goes wrong.");
+                Logger.error("TwitterBountyCampaign save method: Something is broken with the user satoshi balance. Try to restore user balance");
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+            }
+
+
         }
-        return badRequest(views.html.newTwitterBountyCampaign.render(null, user));
+        return badAuth();
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
@@ -287,8 +337,7 @@ public class HomeController extends Controller {
         if (user != null) {
             return ok(views.html.balance.render(claimSatoshiForm, user));
         }
-        flash("error", "Can't fetch balance status.");
-        return badRequest(views.html.balance.render(claimSatoshiForm, null));
+        return badAuth();
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
@@ -306,7 +355,7 @@ public class HomeController extends Controller {
             flash("success", satAdded+" Sat added to your account");
             return ok(views.html.balance.render(claimSatoshiForm, user));
         }
-        return badRequest(views.html.newTwitterBountyCampaign.render(null, null));
+        return badAuth();
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
@@ -318,7 +367,14 @@ public class HomeController extends Controller {
             flash("success", " account balance set to 0 Satoshi");
             return ok(views.html.balance.render(claimSatoshiForm, user));
         }
-        return badRequest(views.html.newTwitterBountyCampaign.render(null, null));
+        return badAuth();
+    }
+
+
+    private Result badAuth() {
+        flash("error", "can't authenticate user");
+        session().clear();
+        return redirect("/");
     }
 
 }

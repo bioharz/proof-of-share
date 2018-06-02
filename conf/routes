@@ -33,6 +33,7 @@ GET     /tweet/:id                  controllers.HomeController.form(id:Integer)
 
 POST    /tweet                      controllers.HomeController.save
 
+#+nocsrf
 DELETE  /tweet/:id                  controllers.HomeController.delete(id:Integer)
 
 GET     /balance                    controllers.HomeController.balance()
