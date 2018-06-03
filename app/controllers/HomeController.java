@@ -5,6 +5,7 @@ import dao.TwitterBountyCampaignDao;
 import dao.UserDao;
 import middlewares.SessionAuthenticationMiddleware;
 import models.dto.ChangePw;
+import models.dto.ClaimSatoshiDto;
 import models.dto.Login;
 import models.dto.RegisterDto;
 import models.entities.TwitterBountyCampaign;
@@ -32,6 +33,7 @@ public class HomeController extends Controller {
     protected Form<ChangePw> changePwForm;
     protected Form<RegisterDto> registerForm;
     protected TwitterGetAPI twitterGetAPI;
+    protected Form<ClaimSatoshiDto> claimSatoshiForm;
 
     @Inject
     public HomeController(
@@ -47,13 +49,14 @@ public class HomeController extends Controller {
         //Form<PartialUserForm> form = formFactory().form(PartialUserForm.class, SignUpCheck.class).bindFromRequest();
         this.registerForm = formFactory.form(RegisterDto.class, SignUpCheck.class);
         this.twitterGetAPI = twitterGetAPI;
+        this.claimSatoshiForm = formFactory.form(ClaimSatoshiDto.class);
     }
 
 
     public Result index() {
 
         User user = getSessionUser(false); //TODO: What's that???
-        return ok(views.html.index.render());
+        return ok(views.html.index.render(user));
     }
 
     public Result signUpPage() {
@@ -76,7 +79,7 @@ public class HomeController extends Controller {
                 User newUser = new User();
                 newUser.setUsername(form.get().getUsername());
                 twitter4j.User twitterUser = twitterGetAPI.getUser(form.get().getTwitterScreenName());
-                if(twitterUser == null){
+                if (twitterUser == null) {
                     String errorMessage = "Can't find TwitterScreenName.";
                     flash("error", errorMessage);
                     Logger.error(errorMessage);
@@ -128,10 +131,10 @@ public class HomeController extends Controller {
     public Result dashboard() {
         User user = getSessionUser(true);
         if (user != null) {
-            List<TwitterBountyCampaign> twitterBountyCampaign = twitterBountyCampaignDao.getTweets(user);
-            return ok(views.html.dashboard.render(twitterBountyCampaign));
+            List<TwitterBountyCampaign> twitterBountyCampaign = twitterBountyCampaignDao.getTweets();
+            return ok(views.html.dashboard.render(twitterBountyCampaign, user));
         }
-        return badRequest(views.html.dashboard.render(null));
+        return badAuth();
     }
 
 
@@ -144,9 +147,9 @@ public class HomeController extends Controller {
             if (TwitterBountyCampaign == null) {
                 TwitterBountyCampaign = new TwitterBountyCampaign();
             }
-            return ok(views.html.newTwitterBountyCampaign.render(twitterBountyCampaignForm.fill(TwitterBountyCampaign)));
+            return ok(views.html.newTwitterBountyCampaign.render(twitterBountyCampaignForm.fill(TwitterBountyCampaign), user));
         }
-        return badRequest(views.html.dashboard.render(null));
+        return badAuth();
     }
 
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
@@ -155,24 +158,75 @@ public class HomeController extends Controller {
         if (user != null) {
             Form<TwitterBountyCampaign> form = twitterBountyCampaignForm.bindFromRequest();
             if (form.hasErrors()) {
-                return badRequest(views.html.newTwitterBountyCampaign.render(form));
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
             }
-            Status status = twitterGetAPI.getStatus(form.get().getTweetId());
+            TwitterBountyCampaign twitterBountyCampaign = form.get();
+
+            if (twitterBountyCampaignDao.getActiveTweetByTweetId(twitterBountyCampaign.getTweetId()) != null) {
+                String errorMessage = "The tweet-id is already registered and campaign is active";
+                flash("error", errorMessage);
+                Logger.error(errorMessage);
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+            }
+
+            if (user.getSatoshiBalance() < twitterBountyCampaign.getTotalSatoshiToSpend()) {
+                String errorMessage = "You have not enough Satoshi in your account.";
+                flash("error", errorMessage);
+                Logger.error(errorMessage);
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+                //!!!----A layer of fear---!!!
+            } else if (twitterBountyCampaign.getTotalSatoshiToSpend() <= 0) {
+                String errorMessage = "Total Satoshi to spend have to be greater than 0.";
+                flash("error", errorMessage);
+                Logger.error(errorMessage);
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+            }
+            Status status = twitterGetAPI.getStatus(twitterBountyCampaign.getTweetId());
             if (status == null) {
                 String errorMessage = "Bad Twitter status-ID.";
                 flash("error", errorMessage);
                 Logger.error(errorMessage);
-                return badRequest(views.html.newTwitterBountyCampaign.render(form));
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
             }
-            TwitterBountyCampaign twitterBountyCampaign = form.get();
-            twitterBountyCampaign.setTwitterScreenName(status.getUser().getScreenName());
-            twitterBountyCampaignDao.saveTweets(twitterBountyCampaign, user);
-            flash("success", "The TwitterBountyCampaign was successfully saved.");
-            return redirect("/dashboard");
+
+            //!!!---Just another layer of paranoia. Probably a useless one.---!!!
+            Long oldUserBalance = user.getSatoshiBalance();
+            Long newUserBalance = oldUserBalance - twitterBountyCampaign.getTotalSatoshiToSpend();
+            if (newUserBalance < 0) {
+                String errorMessage = "You have not enough Satoshi in your account.";
+                flash("error", errorMessage);
+                Logger.error(errorMessage);
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+            } else if (newUserBalance > oldUserBalance) {
+                flash("error", "Nice try!");
+                Logger.error("User tried to steal money from us!");
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+            }
+            user.setSatoshiBalance(newUserBalance);
+            userDao.updateUser(user);
+            User tempUser = userDao.getUserByUsername(user.getUsername());
+            boolean successfulSaved = false;
+            if (tempUser != null && tempUser.getSatoshiBalance() == newUserBalance && tempUser.getSatoshiBalance() == user.getSatoshiBalance()) {
+                twitterBountyCampaign.setTwitterScreenName(status.getUser().getScreenName());
+                successfulSaved = twitterBountyCampaignDao.saveTweets(twitterBountyCampaign, user);
+                if (successfulSaved) {
+                    flash("success", "The TwitterBountyCampaign was successfully saved.");
+                    return redirect("/dashboard");
+                }
+            } else {
+                user.setSatoshiBalance(oldUserBalance);
+                userDao.updateUser(user);
+                flash("error", "Something horrible goes wrong.");
+                Logger.error("TwitterBountyCampaign save method: Something is broken with the user satoshi balance. Try to restore user balance");
+                return badRequest(views.html.newTwitterBountyCampaign.render(form, user));
+            }
+
+
         }
-        return badRequest(views.html.newTwitterBountyCampaign.render(null));
+        return badAuth();
     }
 
+    @Deprecated
     @Security.Authenticated(SessionAuthenticationMiddleware.class)
     public Result delete(int id) {
         User user = getSessionUser(true);
@@ -180,7 +234,39 @@ public class HomeController extends Controller {
             twitterBountyCampaignDao.deleteTweet(id, user);
             return ok();
         }
-        return badRequest(views.html.dashboard.render(null));
+        return badRequest(views.html.dashboard.render(null, null));
+    }
+
+    //ugly piece of code
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+    public Result stop(int id) {
+        User user = getSessionUser(true);
+        if (user != null) {
+            TwitterBountyCampaign twitterBountyCampaign = twitterBountyCampaignDao.getTweet(id, user);
+            if (twitterBountyCampaign != null && !twitterBountyCampaign.isDisabled()) {
+                boolean campaignStopped = twitterBountyCampaignDao.stopTweet(id, user);
+                if (campaignStopped) {
+                    long oldBalance = user.getSatoshiBalance();
+                    long newBalance = oldBalance + twitterBountyCampaign.getTotalSatoshiToSpend();
+
+                    twitterBountyCampaign.setTotalSatoshiToSpend(0L);
+                    boolean campaignSatoshiSetToZero = twitterBountyCampaignDao.setSatoshiToZero(id, user);
+                    if (campaignSatoshiSetToZero) {
+                        if (twitterBountyCampaignDao.getTweet(twitterBountyCampaign.getId(), user).getTotalSatoshiToSpend() == 0L) {
+                            user.setSatoshiBalance(newBalance);
+                            User newTempUser = userDao.updateUser(user);
+                            if (newTempUser != null && newTempUser.getSatoshiBalance() == newBalance) {
+                                flash("success", "campaign successfully stopped.");
+                                return ok();
+                            }
+                        }
+                    }
+                }
+            }
+            flash("error", "Something horrible goes wrong. Please contact the administrator!");
+            Logger.error("I have no idea what's happened. May the user try to scam us...");
+        }
+        return badRequest();
     }
 
     public Result login() {
@@ -210,6 +296,7 @@ public class HomeController extends Controller {
         session().clear();
         session("username", user.getUsername());
         session("isAdmin", user.getAdmin().toString());
+        session("balance", Long.toString(user.getSatoshiBalance()));
     }
 
 
@@ -239,11 +326,12 @@ public class HomeController extends Controller {
 
         User user = getSessionUser(true);
         if (user != null) {
-            return ok(views.html.changePassword.render(changePwForm.fill(new ChangePw())));
+            return ok(views.html.changePassword.render(changePwForm.fill(new ChangePw()), user));
         }
-        return badRequest(views.html.dashboard.render(null));
+        return badAuth();
     }
 
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
     public Result changePw() {
 
         Form<ChangePw> form = changePwForm.bindFromRequest();
@@ -267,13 +355,55 @@ public class HomeController extends Controller {
                     return redirect(routes.HomeController.changePwPage());
                 }
             }
-
-        } else {
-            flash("error", "Password Change Error.");
-            return redirect(routes.HomeController.changePwPage());
         }
         flash("error", "Password Change Error...");
-        return redirect(routes.HomeController.changePwPage());
+        return badAuth();
+    }
+
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+    public Result balance() {
+        User user = getSessionUser(true);
+        if (user != null) {
+            return ok(views.html.balance.render(claimSatoshiForm, user));
+        }
+        return badAuth();
+    }
+
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+    public Result claimSatoshi() {
+        User user = getSessionUser(true);
+        if (user != null) {
+            Form<ClaimSatoshiDto> form = claimSatoshiForm.bindFromRequest();
+            if (form.hasErrors()) {
+                return badRequest(views.html.balance.render(form, user));
+            }
+            long satAdded = form.get().getSatoshi();
+            long newBalance = user.getSatoshiBalance() + satAdded;
+            user.setSatoshiBalance(newBalance);
+            userDao.updateUser(user);
+            flash("success", satAdded + " Sat added to your account");
+            return ok(views.html.balance.render(claimSatoshiForm, user));
+        }
+        return badAuth();
+    }
+
+    @Security.Authenticated(SessionAuthenticationMiddleware.class)
+    public Result resetBalance() {
+        User user = getSessionUser(true);
+        if (user != null) {
+            user.setSatoshiBalance(0);
+            userDao.updateUser(user);
+            flash("success", " account balance set to 0 Satoshi");
+            return ok(views.html.balance.render(claimSatoshiForm, user));
+        }
+        return badAuth();
+    }
+
+
+    private Result badAuth() {
+        flash("error", "can't authenticate user");
+        session().clear();
+        return redirect("/");
     }
 
 }

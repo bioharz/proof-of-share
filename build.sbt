@@ -28,3 +28,8 @@ libraryDependencies += "com.twitter" % "hbc-twitter4j" % "2.2.0"
 
 // https://mvnrepository.com/artifact/commons-lang/commons-lang
 libraryDependencies += "commons-lang" % "commons-lang" % "2.2"
+
+
+resolvers += "tuxburner.github.io" at "http://tuxburner.github.io/repo"
+
+libraryDependencies += "com.github.tuxBurner" %% "play-akkajobs" % "2.6.1"

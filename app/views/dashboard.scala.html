@@ -1,47 +1,64 @@
 @import models.entities.TwitterBountyCampaign
-@(twitterBountyCampaigns: List[TwitterBountyCampaign])
-@main("Dashboard") {
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="/">Dashboard</a>
-            </li>
-        </ol>
-    </nav>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Tweet-ID</th>
-                <th>Satoshi left</th>
-                <th>Last Edited</th>
-                @if(session().get("isAdmin") != null && session().get("isAdmin") == "true") {
-                    <th>User</th>
-                }
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        @for(twitterBountyCampaign <- twitterBountyCampaigns) {
-            <tr>
-                <td>@twitterBountyCampaign.getTweetId()</td>
-                <td>@twitterBountyCampaign.getTotalSatoshiToSpend</td>
-                <td>@twitterBountyCampaign.getLastEditedFormatted()</td>
-                @if(session().get("isAdmin") != null && session().get("isAdmin") == "true") {
-                    <td>@twitterBountyCampaign.getUser().getUsername</td>
-                }
-                <td>
-                    <a class="btn btn-primary" target="_blank" href="https://twitter.com/@twitterBountyCampaign.getTwitterScreenName()/status/@twitterBountyCampaign.getTweetId()">Show Tweet</a>
-
-                    <a class="btn btn-success" href="/notes/@twitterBountyCampaign.getId()">Edit</a>
-                    @if(session().get("isAdmin") != null && session().get("isAdmin") == "true" &&
-                            session().get("username") != null && session().get("username") != twitterBountyCampaign.getUser.getUsername) {
-                        <button data-action="delete" data-id="@twitterBountyCampaign.getId()" class="btn btn-danger" disabled>Delete</button>
-                    } else {
-                        <button data-action="delete" data-id="@twitterBountyCampaign.getId()" class="btn btn-danger">Delete</button>
+@import models.entities.User
+@(twitterBountyCampaigns: List[TwitterBountyCampaign], user: User)
+    @main("Dashboard", user) {
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">Dashboard</a>
+                </li>
+            </ol>
+        </nav>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tweet-ID</th>
+                    <th>Sat per retweet</th>
+                    <th>Sat per like</th>
+                    <th>Sat left</th>
+                    <th>Created</th>
+                    @if(session().get("isAdmin") != null && session().get("isAdmin") == "true") {
+                        <th>User</th>
                     }
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for(twitterBountyCampaign <- twitterBountyCampaigns) {
+                <tr>
+                    <td>@twitterBountyCampaign.getTweetId()</td>
+                    <td>@twitterBountyCampaign.getSatoshiPerReTweet</td>
+                    <td>@twitterBountyCampaign.getSatoshiPerLike</td>
+                    <td>@twitterBountyCampaign.getTotalSatoshiToSpend</td>
+
+                    <td>@twitterBountyCampaign.getCreatedFormatted()</td>
+                    @if(session().get("isAdmin") != null && session().get("isAdmin") == "true") {
+                        <td>@twitterBountyCampaign.getUser().getUsername</td>
+                    }
+                    <td>
+                        <a class="btn btn-outline-info" target="_blank" href="https://twitter.com/@twitterBountyCampaign.getTwitterScreenName()/status/@twitterBountyCampaign.getTweetId()">Show Tweet</a>
+
+                        @if(twitterBountyCampaign.isDisabled) {
+                            <span class="d-inline-block" data-toggle="popover" data-content="Creator stopped the campaign!" id="disabled"  data-trigger="hover">
+                                <button class="btn btn-danger" style="pointer-events: none;" type="button" disabled>DISABLED!</button>
+                            </span>
+                        } else {
+                            @if(user.getId == twitterBountyCampaign.getUser.getId()) {
+                                <button data-action="stop" data-id="@twitterBountyCampaign.getId()" class="btn btn-outline-danger">
+                                    STOP</button>
+                            }
+                        }
+                        @* @if(/*session().get("isAdmin") != null && session().get("isAdmin") == "true" && */
+                        session().get("username") != null && session().get("username") != twitterBountyCampaign.getUser.getUsername) {
+                        <a class="btn btn-success disabled" href="/tweet/@twitterBountyCampaign.getId()">Edit</a>
+                        <button data-action="delete" data-id="@twitterBountyCampaign.getId()" class="btn btn-danger" disabled>Delete</button>
+                        } else {
+                        <a class="btn btn-success" href="/tweet/@twitterBountyCampaign.getId()">Edit</a>
+                        <button data-action="delete" data-id="@twitterBountyCampaign.getId()" class="btn btn-danger">Delete</button>
+                        }*@
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }

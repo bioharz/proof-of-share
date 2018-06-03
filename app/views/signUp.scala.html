@@ -1,6 +1,6 @@
 @import models.dto.RegisterDto
 @(form: Form[RegisterDto])
-@main("Sign Up") {
+@main("Sign Up", null) {
     <section>
         <div class="container">
         @b4.horizontal.form(routes.HomeController.signUpPost(), "col-md-2", "col-md-8") { implicit hfc =>

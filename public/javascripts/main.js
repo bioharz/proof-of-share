@@ -2,13 +2,16 @@ var tbody = document.querySelector('tbody');
 
 if (tbody) {
     tbody.addEventListener('click', function(e) {
-        if (e.target.dataset.action === 'delete') {
-            var confirmDelete = confirm("Do you want to remove the campaign?");
+        if (e.target.dataset.action === 'stop') {
+            var confirmDelete = confirm("Do you want to stop the campaign? Any unspent Satoshi will return to your account balance");
 
             if (confirmDelete) {
                 fetch('/tweet/' + e.target.dataset.id, {
                     method: 'DELETE',
-                    credentials: 'include'
+                    credentials: 'include',
+                    headers: {
+                        'content-type': 'application/x-www-form-urlencoded'
+                    }
                 }).then(function() {
                     location.reload();
                 });
@@ -16,3 +19,11 @@ if (tbody) {
         }
     });
 }
+
+
+//toggle is not working right now...
+/*
+$(function () {
+    $('#disabled').popover('toggle')
+});
+*/

@@ -30,6 +30,8 @@ public class User extends Model {
     @NotNull
     protected String email;
 
+    protected long satoshiBalance = 0;
+
     //TODO
     public void setPasswordInClear(String password) {
         setPassword(getHash(password));
@@ -106,5 +108,14 @@ public class User extends Model {
 
     public static Finder<Long, User> getFind() {
         return find;
+    }
+
+
+    public long getSatoshiBalance() {
+        return satoshiBalance;
+    }
+
+    public void setSatoshiBalance(long satoshiBalance) {
+        this.satoshiBalance = satoshiBalance;
     }
 }

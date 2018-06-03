@@ -1,6 +1,7 @@
 @import models.entities.TwitterBountyCampaign
-@(form: Form[TwitterBountyCampaign])
-    @main("Tweet form") {
+@import models.entities.User
+@(form: Form[TwitterBountyCampaign], user: User)
+    @main("Tweet form", user) {
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
@@ -15,7 +16,7 @@
             @b4.horizontal.form(routes.HomeController.save(), "col-md-2", "col-md-8") { implicit hfc =>
                 @b4.text(form("tweetId"), '_label -> "Tweet-ID", 'placeholder -> "1000321601345392640", '_help -> "Insert the target Tweet-ID")
                 @b4.text(form("satoshiPerReTweet"), '_label -> "Satoshi per retweet", 'placeholder -> "100", '_help -> "A value between 1-10000 Satoshi")
-                @b4.text(form("satoshiPerLike"), '_label -> "Satoshi per like", 'placeholder -> "100", '_help -> "A value between 1-10000 Satoshi")
+                @b4.text(form("satoshiPerLike"), '_label -> "Satoshi per like", 'placeholder -> "50", '_help -> "A value between 1-10000 Satoshi")
                 @b4.text(form("totalSatoshiToSpend"), '_label -> "Total amount of Satoshi to spend", 'placeholder -> "10000", '_help -> "A value between 10000-1000000 Satoshi")
                 @helper.CSRF.formField
                 @b4.submit('class -> "btn btn-primary") { create new twitter bounty campaign }

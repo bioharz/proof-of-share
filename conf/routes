@@ -33,8 +33,14 @@ GET     /tweet/:id                  controllers.HomeController.form(id:Integer)
 
 POST    /tweet                      controllers.HomeController.save
 
-DELETE  /tweet/:id                  controllers.HomeController.delete(id:Integer)
++nocsrf
+DELETE  /tweet/:id                  controllers.HomeController.stop(id:Integer)
 
+GET     /balance                    controllers.HomeController.balance()
+
+POST    /claim-satoshi              controllers.HomeController.claimSatoshi
+
+POST    /reset-balance              controllers.HomeController.resetBalance
 # API v1
 #GET     /api/v1/categories          controllers.CategoryController.list(sort: String ?=null, query: String ?=null)
 
