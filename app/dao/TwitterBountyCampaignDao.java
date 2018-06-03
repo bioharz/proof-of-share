@@ -15,12 +15,21 @@ public class TwitterBountyCampaignDao {
     }
 
 
-    public TwitterBountyCampaign getTweetByTweetId(long tweetId){
+    public TwitterBountyCampaign getTweetByTweetId(long tweetId) {
         return Ebean.find(TwitterBountyCampaign.class)
                 .where()
                 .eq("tweetId", tweetId)
                 .findOne();
     }
+
+    public TwitterBountyCampaign getActiveTweetByTweetId(long tweetId) {
+        return Ebean.find(TwitterBountyCampaign.class)
+                .where()
+                .eq("tweetId", tweetId)
+                .eq("disabled", false)
+                .findOne();
+    }
+
 
     public List<TwitterBountyCampaign> getTweets(User user) {
         if (user.getAdmin()) {
@@ -64,7 +73,9 @@ public class TwitterBountyCampaignDao {
 
         try {
             if (twitterBountyCampaign.getId() > 0) {
-                Ebean.update(twitterBountyCampaign);
+                Logger.error("for now, we can't edit a running campaign");
+                return false;
+                //Ebean.update(twitterBountyCampaign);
             } else {
                 Ebean.save(twitterBountyCampaign);
             }
@@ -122,5 +133,38 @@ public class TwitterBountyCampaignDao {
                 Logger.error("Don't get me wrong, but i think your code is broken. See TwitterBountyCampaignDao, deleteTweet(id, user)");
             }
         }
+    }
+
+
+    public boolean stopTweet(int id, User user) {
+        try {
+            if (user != null) {
+                TwitterBountyCampaign twitterBountyCampaign = getTweet(id, user);
+                if (twitterBountyCampaign != null) {
+                    twitterBountyCampaign.setDisabled(true);
+                    Ebean.update(twitterBountyCampaign);
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            Logger.error("Can't disable bounty campaign: "+e);
+        }
+        return false;
+    }
+
+    public boolean setSatoshiToZero(int id, User user){
+        try {
+            if (user != null){
+                TwitterBountyCampaign twitterBountyCampaign = getTweet(id, user);
+                if (twitterBountyCampaign != null) {
+                    twitterBountyCampaign.setTotalSatoshiToSpend(0L);
+                    Ebean.update(twitterBountyCampaign);
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            Logger.error("Can't set Satoshi to zero: "+e);
+        }
+        return false;
     }
 }

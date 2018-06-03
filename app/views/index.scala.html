@@ -1,5 +1,6 @@
-@()
-@main("Dashboard", null) {
+@import models.entities.User
+@(user: User)
+@main("Dashboard", user) {
     <div class="row">
         <div class="col-md-1"> </div>
         <div class="col-md-4" align="center">

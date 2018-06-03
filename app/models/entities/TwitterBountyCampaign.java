@@ -24,7 +24,6 @@ public class TwitterBountyCampaign extends Model implements Constraints.Validata
     protected int id; // = 0;
 
     @NotNull
-    @Column(unique = true)
     @Constraints.Required(groups = {TwitterBountyCampaignCheck.class})
     protected long tweetId;
 

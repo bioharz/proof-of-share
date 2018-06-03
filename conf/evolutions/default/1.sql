@@ -13,7 +13,6 @@ create table twitter_bounty_campaign (
   created                       integer not null,
   disabled                      boolean default false not null,
   user_id                       integer,
-  constraint uq_twitter_bounty_campaign_tweet_id unique (tweet_id),
   constraint pk_twitter_bounty_campaign primary key (id)
 );
 
