@@ -7,6 +7,7 @@
                 <div class="panel panel-primary">
                     <div class="panel-heading"><h2>Like this:</h2></div>
                     <div class="panel-body">
+                        <a href="/api/v1/oauth"><button class="submit" id="oauth_login">OAuth Login</button></a>
                         <table class="table">
                             <thead>
                                 <tr>
@@ -22,7 +23,7 @@
                                     <td>
                                             <!-- businessLike needed for Js (adding event listeners). So there might not be a valid Css class for it.
                                             Only these btns should have this class! -->
-                                        <button class="submit businessLike" id="@business.getBusinessId()">Like</button>
+                                        <button class="submit businessLike" id="@business.getPostId()">Like</button>
                                     </td>
                                 </tr>
                             }

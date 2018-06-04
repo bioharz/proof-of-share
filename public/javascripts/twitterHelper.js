@@ -5,7 +5,7 @@ addLikeEventListeners();
 
 /** Unfortunately, needed bc. of security policy. */
 function addLikeEventListeners() {
-    for (var elem of document.getElementsByClassName('businessLike')) {
+    for (let elem of document.getElementsByClassName('businessLike')) {
         const elemId = elem.id;
         elem.addEventListener('click',function () {
             sendTwitterLike(elemId);
@@ -14,7 +14,7 @@ function addLikeEventListeners() {
 }
 
 function sendTwitterLike(twitterPostId) {
-    var formData = new FormData();
+    let formData = new FormData();
     formData.append('postId',twitterPostId);
 
     fetch("/api/v1/like",
@@ -22,8 +22,9 @@ function sendTwitterLike(twitterPostId) {
             method: "POST",
             body: formData
         })
+        .then((resp) => resp.json())
         .then(function(res) {
-            console.log('Submitted like request: '+res);
+            console.log('Submitted like request: '+JSON.stringify(res));
         })
-        .catch(function (reason) { console.error('Could not like post: '+reason); });
+        .catch(function (reason) { console.error('Could not like post: '+JSON.stringify(reason)); });
 }
