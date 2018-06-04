@@ -12,6 +12,11 @@ libraryDependencies += javaJdbc
 libraryDependencies += javaJpa
 libraryDependencies += "com.h2database" % "h2" % "1.4.197"
 
+//OAuth
+libraryDependencies ++= Seq(
+  ws
+)
+
 //TODO: experimental!!! see: https://adrianhurt.github.io/play-bootstrap/
 // Resolver is needed only for SNAPSHOT versions
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"

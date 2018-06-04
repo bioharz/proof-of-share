@@ -72,11 +72,11 @@ GET           /changepw                     controllers.HomeController.changePwP
 POST          /changepw                     controllers.HomeController.changePw()
 
 # Business Controller routes
-
++nocsrf
 POST        /business                       controllers.BusinessController.business()
 GET         /like                           controllers.BusinessController.like()
 
 # TWITTER - API
 +nocsrf
 POST        /api/v1/like                   controllers.TwitterController.likePost
-
+GET        /api/v1/oauth                  controllers.TwitterController.oAuth

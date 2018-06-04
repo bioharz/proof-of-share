@@ -6,6 +6,12 @@ public interface ITwitterController {
 
     String CONSUMER_KEY = "SNL2zPYYZ7zIT1KI78Aowi63N";
     String CONSUMER_SECRET = "qcoswPxuAFtzFFwSaXSjOcOWzh8DnIG59VLsNwdjwTQJ1VOq2q";
+
+    interface REZA {
+        String CONSUMER_KEY = "GO2XO5ogMUfsnjdVUVhvIZac8";
+        String CONSUMER_SECRET = "Kkb9TzwRq8CzdiEe3SC1ZLfAyTPz9vbI9SBaVlYYjjsZtlPbeR";
+    }
+
     String ACCESS_TOKEN = "995705337801068545-gBX7zvKCurqc61CoH0USj82M2MLT3i1";
     String ACCESS_TOKEN_SECRET = "SR85Eg2kb1vnghjQtHKrct8Gi0n39gearKXDKo03x5o6L";
 }
