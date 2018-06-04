@@ -45,38 +45,70 @@ public class TwitterGetScheduler extends AbstractAnnotatedJob {
 
         twitterBountyCampaigns = twitterBountyCampaignDao.getAllActiveTweetsWithFund();
 
+        List<Long> statusIds = new ArrayList<>();
+
         if (!twitterBountyCampaigns.isEmpty()) {
             for (TwitterBountyCampaign twitterBountyCampaign : twitterBountyCampaigns) {
                 if (campaignHaveEnoughToPay(twitterBountyCampaign)) {
-
+                    statusIds.add(twitterBountyCampaign.getTweetId());
                 } else {
                     disableCampaign(twitterBountyCampaign);
                 }
             }
         }
 
-        Logger.debug("Run run");
-        List<Long> testStatusIds = new ArrayList<>();
-        testStatusIds.add(1000754697278513152L);
-        testStatusIds.add(1000708329914667008L);
-        testStatusIds.add(1000322992919007232L);
-        List<Status> twitterStatusList = twitterGetAPI.getRetweetStatusList(testStatusIds);
+        List<Status> twitterStatusList = twitterGetAPI.getRetweetStatusList(statusIds);
 
         for (Status status : twitterStatusList) {
-            Logger.info("Tweet-text: " + status.getText() + "\n" +
-                    "RetweetCount: " + status.getRetweetCount() + "\n" +
-                    "FavoriteCount: " + status.getFavoriteCount());
+            String twitterScreenName = status.getUser().getScreenName();
+            User user = userDao.getUserByTwitterScreenName(twitterScreenName);
+
+            if(user != null){
+                TwitterBountyCampaign twitterBountyCampaign = findtwitterBountyCampaignByid(twitterBountyCampaigns, status.getRetweetedStatus().getId());
+                if(twitterBountyCampaign != null) {
+                    rewardUserForRetweet(twitterBountyCampaign, user);
+                }
+            }
+
         }
     }
 
+    //TODO: quick and dirty
+    private boolean rewardUserForRetweet(TwitterBountyCampaign twitterBountyCampaign, User user){
+        long oldCampaignBalance = twitterBountyCampaign.getTotalSatoshiToSpend();
+        long retweetReward = twitterBountyCampaign.getSatoshiPerReTweet();
+        long newCampaignBalance = oldCampaignBalance - retweetReward;
 
-    private boolean campaign(TwitterBountyCampaign twitterBountyCampaign){
+        if(newCampaignBalance < 0){
+            disableCampaign(twitterBountyCampaign);
+            return false;
+        }
 
+        long oldUserBalance = user.getSatoshiBalance();
+        long newUserBalance = oldUserBalance+retweetReward;
 
+        if(newUserBalance <= 0 || newUserBalance > oldCampaignBalance) {
+            return false;
+        }
 
-        return false;
+        user.setSatoshiBalance(newUserBalance);
+        userDao.updateUser(user);
+
+        twitterBountyCampaign.setTotalSatoshiToSpend(newCampaignBalance);
+        twitterBountyCampaignDao.saveTweets(twitterBountyCampaign);
+
+        return true;
+
     }
 
+    private TwitterBountyCampaign findtwitterBountyCampaignByid(List<TwitterBountyCampaign> twitterBountyCampaigns, long statusId){
+        for (TwitterBountyCampaign twitterBountyCampaign : twitterBountyCampaigns) {
+            if(twitterBountyCampaign.getTweetId() == statusId){
+                return twitterBountyCampaign;
+            }
+        }
+        return null;
+    }
 
     //Yeah. It's a and. But for now, it's OK
     private boolean campaignHaveEnoughToPay(TwitterBountyCampaign twitterBountyCampaign) {

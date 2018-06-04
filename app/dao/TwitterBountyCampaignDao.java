@@ -78,9 +78,10 @@ public class TwitterBountyCampaignDao extends AbstractModule {
 
         try {
             if (twitterBountyCampaign.getId() > 0) {
-                Logger.error("for now, we can't edit a running campaign");
-                return false;
-                //Ebean.update(twitterBountyCampaign);
+                //TODO: we should handle this in a different way..
+                //Logger.error("for now, we can't edit a running campaign");
+                //return false;
+                Ebean.update(twitterBountyCampaign);
             } else {
                 Ebean.save(twitterBountyCampaign);
             }

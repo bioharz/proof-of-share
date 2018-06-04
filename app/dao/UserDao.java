@@ -17,7 +17,7 @@ public class UserDao extends AbstractModule {
                     .where().eq("username", username)
                     .findOne();
         } catch (Exception e) {
-            Logger.error("Can't fine the user with username: " + username + ". Error: " + e);
+            Logger.error("Error while try to fetch user with username: " + username + ". Error: " + e);
             return null;
         }
     }
@@ -29,5 +29,17 @@ public class UserDao extends AbstractModule {
 
     public void deleteUser(int id) {
         Ebean.delete(User.class, id);
+    }
+
+
+    public User getUserByTwitterScreenName(String twitterScreenName){
+        try {
+            return Ebean.find(User.class)
+                    .where().eq("twitterScreenName", twitterScreenName)
+                    .findOne();
+        } catch (Exception e) {
+            Logger.error("Error while try to fetch user with twitterScreenName: " + twitterScreenName + ". Error: " + e);
+            return null;
+        }
     }
 }
