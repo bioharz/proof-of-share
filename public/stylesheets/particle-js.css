@@ -29,8 +29,16 @@ li{list-style:none}
    ========================================================================== */
 
 /* ---- base ---- */
+/*TODO: ugly fix, remove this ASAP*/
 
+.navbar {
+    margin-bottom:0px;
+}
 
+/*TODO: ugly fix, remove this ASAP*/
+particles-js-canvas-el {
+    top:20px;
+}
 
 
 /* ---- stats.js ---- */
