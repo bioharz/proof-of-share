@@ -4,7 +4,8 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/particle-js.css")">
 
         <div id="particles-js">
-            <div class="container col-md-12 body-particles" id="boxes">
+            <div class="container body-particles" id="box">
+                <div class="row">
         @b4.horizontal.form(routes.HomeController.signUpPost(), "col-md-2", "col-md-8") { implicit hfc =>
             @b4.text(form("username"), '_label -> "Username", 'placeholder -> "satoshinakamoto", '_help -> "A username between 4 and 20 characters without any special character")
             @b4.text(form("twitterScreenName"), '_label -> "TwitterScreenName", 'placeholder -> "@proofofshare1", '_help -> "a valid TweeterScreenName with @")
@@ -15,6 +16,7 @@
             @helper.CSRF.formField
             @b4.submit('class -> "btn btn-primary") { Sign in }
         }
+        </div>
         </div>
         </div>
 
