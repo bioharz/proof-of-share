@@ -18,37 +18,6 @@ import java.util.List;
 @AkkaJob(cronExpression = "0/15 * * * * ?")
 public class TwitterGetScheduler extends AbstractAnnotatedJob {
 
-    /** Kanns leider nicht kompilieren (einige Bibliotheken fehlen usw.
-     * Nach secrets usw hinzufügen hab ich dir hier meine Vorschläge kommentiert.
-     * Einer müsste normalerweise funktionieren. In absteigender Reihenfolge
-     * meine Empfehlungen:
-     *
-     * ######################### 1 ######################
-     * protected TwitterGetAPI twitterGetAPI;
-     * public TwitterGetScheduler(ActorSystem actorSystem, @Inject TwitterGetApi twitterGetAPI) throws JobException {
-     *     super(actorSystem);
-     *     this.twitterGetAPI = twitterGetAPI;
-     * }
-     *
-     * ######################### 2 ###################### --> so hast dus
-     * @Inject
-     * protected TwitterGetAPI twitterGetAPI;
-     * public TwitterGetScheduler(ActorSystem actorSystem) throws JobException {
-     *     super(actorSystem);
-     * }
-     *
-     * ######################### 3 ######################
-     * protected TwitterGetAPI twitterGetAPI;
-     * @Inject
-     * public TwitterGetScheduler(ActorSystem actorSystem, TwitterGetApi twitterGetAPI) throws JobException {
-     *     super(actorSystem);
-     *     this.twitterGetAPI = twitterGetAPI;
-     * }
-     *
-     * Ansonsten keine Ahnung warum. Am besten zeigst mir das Problem mal auf deinem Laptop, bevor ich mich hier
-     * stundenlang aufrege, um mal alle Bibliotheken zu importieren usw.
-     *
-     * */
 
     @Inject
     protected TwitterGetAPI twitterGetAPI;
