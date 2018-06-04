@@ -1,5 +1,6 @@
 package dao;
 
+import com.google.inject.AbstractModule;
 import io.ebean.Ebean;
 import models.entities.TwitterBountyCampaign;
 import models.entities.User;
@@ -7,7 +8,11 @@ import play.Logger;
 
 import java.util.List;
 
-public class TwitterBountyCampaignDao {
+public class TwitterBountyCampaignDao extends AbstractModule {
+
+    @Override
+    protected void configure() {
+    }
 
     @Deprecated
     public List<TwitterBountyCampaign> getTweets() {
@@ -147,14 +152,29 @@ public class TwitterBountyCampaignDao {
                 }
             }
         } catch (Exception e) {
-            Logger.error("Can't disable bounty campaign: "+e);
+            Logger.error("Can't disable bounty campaign: " + e);
         }
         return false;
     }
 
-    public boolean setSatoshiToZero(int id, User user){
+
+    public boolean stopTweet(int id) {
         try {
-            if (user != null){
+            TwitterBountyCampaign twitterBountyCampaign = getTweet(id);
+            if (twitterBountyCampaign != null) {
+                twitterBountyCampaign.setDisabled(true);
+                Ebean.update(twitterBountyCampaign);
+                return true;
+            }
+        } catch (Exception e) {
+            Logger.error("Can't disable bounty campaign: " + e);
+        }
+        return false;
+    }
+
+    public boolean setSatoshiToZero(int id, User user) {
+        try {
+            if (user != null) {
                 TwitterBountyCampaign twitterBountyCampaign = getTweet(id, user);
                 if (twitterBountyCampaign != null) {
                     twitterBountyCampaign.setTotalSatoshiToSpend(0L);
@@ -163,8 +183,41 @@ public class TwitterBountyCampaignDao {
                 }
             }
         } catch (Exception e) {
-            Logger.error("Can't set Satoshi to zero: "+e);
+            Logger.error("Can't set Satoshi to zero: " + e);
         }
         return false;
     }
+
+    public boolean atleastOneActiveCampaign() {
+        try {
+            TwitterBountyCampaign twitterBountyCampaign = Ebean.find(TwitterBountyCampaign.class)
+                    .where()
+                    .eq("disabled", false)
+                    .findOne();
+            if (twitterBountyCampaign != null) {
+                return true;
+            }
+        } catch (Exception e) {
+            Logger.error("anyActiveCampaign error: " + e);
+
+        }
+        return false;
+    }
+
+
+    public List<TwitterBountyCampaign> getAllActiveTweets() {
+        return Ebean.find(TwitterBountyCampaign.class)
+                .where()
+                .eq("disabled", false)
+                .findList();
+    }
+
+    public List<TwitterBountyCampaign> getAllActiveTweetsWithFund() {
+        return Ebean.find(TwitterBountyCampaign.class)
+                .where()
+                .eq("disabled", false)
+                .gt("totalSatoshiToSpend", 0)
+                .findList();
+    }
+
 }

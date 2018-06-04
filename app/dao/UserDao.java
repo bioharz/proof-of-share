@@ -1,10 +1,15 @@
 package dao;
 
+import com.google.inject.AbstractModule;
 import io.ebean.Ebean;
 import models.entities.User;
 import play.Logger;
 
-public class UserDao {
+public class UserDao extends AbstractModule {
+
+    @Override
+    protected void configure() {
+    }
 
     public User getUserByUsername(String username) {
         try {

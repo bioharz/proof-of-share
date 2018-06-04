@@ -18,7 +18,6 @@ public class TwitterGetAPI extends AbstractModule {
     protected void configure() {
     }
 
-
     private Twitter twitterInstance = null;
 
     public TwitterGetAPI() {
