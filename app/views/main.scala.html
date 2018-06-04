@@ -15,6 +15,7 @@
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("dependencies/bootstrap-4.1.0/dist/css/bootstrap.min.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/particle-js.css")">
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -24,7 +25,8 @@
                 <ul class="navbar-nav">
                 @if(user != null && user.getUsername != "") {
                     <li class="nav-item"><a href="/balance" class="nav-link"><button class="btn btn-info navbar-btn">
-                        Balance:  <div class="badge badge-light" id="user-satoshi-balance">@user.getSatoshiBalance</div> sat</button></a></li>
+                        Balance:  <div class="badge badge-light" id="user-satoshi-balance">@user.getSatoshiBalance</div>
+                        sat</button></a></li>
                     <li class="nav-item"><a href="/dashboard" class="nav-link"><button class="btn btn-secondary navbar-btn">
                         Dashboard</button></a></li>
                     <li class="nav-item"><a href="/tweet/0" class="nav-link"><button class="btn btn-light navbar-btn">
@@ -43,26 +45,29 @@
             </div>
         </nav>
 
-        <div class="container">
-            @if(flash.containsKey("success")) {
-                <div class="alert alert-success" role="alert">
-                    @flash.get("success")
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            }
-            @if(flash.containsKey("error")) {
-                <div class="alert alert-danger" role="alert">
-                    @flash.get("error")
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            }
-            @content
-        </div>
+        <div id="particles-js">
 
+            <div class="container">
+                @if(flash.containsKey("success")) {
+                    <div class="alert alert-success" role="alert">
+                        @flash.get("success")
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                @if(flash.containsKey("error")) {
+                    <div class="alert alert-danger" role="alert">
+                        @flash.get("error")
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                @content
+            </div>
+
+        </div>
 
 
         <script src="@routes.Assets.versioned("dependencies/jquery-3.1.1/jquery-3.3.1.min.js")" type="text/javascript"></script>
@@ -70,5 +75,13 @@
         <script src="@routes.Assets.versioned("dependencies/bootstrap-4.1.0/dist/js/bootstrap.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
         @*<script src="@routes.Assets.versioned("javascripts/twitterHelper.js")" type="text/javascript"></script>*@
+        <script src="@routes.Assets.versioned("dependencies/particles.js-2.0.0/particles.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("javascripts/index.js")" type="text/javascript"></script>
+        <script>
+            particlesJS.load('particles-js', 'particles.json', function () {
+                console.log('particles.json loaded');
+            });
+    </script>
+
     </body>
 </html>

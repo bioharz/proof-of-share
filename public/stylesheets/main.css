@@ -3,10 +3,18 @@
 @import "fonts.css";
 
 .navbar {
+    /*
     margin-bottom:20px;
+    */
 }
 
 #brand-name {
     /*TODO: Just an example.*/
     /*font-family: 'Titan One';*/
+}
+
+
+/*TODO: ugly fix, remove this ASAP*/
+particles-js-canvas-el {
+    top:20px;
 }
