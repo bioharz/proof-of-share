@@ -101,6 +101,7 @@ canvas{
     background-size: cover;
     background-position: 50% 50%;
     background-repeat: no-repeat;
+    left: 0px;
 }
 
 #particles-js canvas{
@@ -156,3 +157,4 @@ h4{
     padding: 0px;
     margin: 10px;
 }
+
